@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" spacing="15" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.shajid.app.inventro.MainController">
+
+    <padding>
+        <Insets top="30" bottom="30" left="40" right="40"/>
+    </padding>
+
+    <Label text="Inventro Login" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+
+    <HBox spacing="10">
+        <Label text="Login As:"/>
+        <ChoiceBox fx:id="roleChoiceBox"/>
+    </HBox>
+
+    <TextField fx:id="userIdField" promptText="Enter User ID"/>
+    <PasswordField fx:id="passwordField" promptText="Enter Password"/>
+
+    <Button text="Login" onAction="#handleLogin" maxWidth="200"/>
+
+    <Hyperlink text="Create New Account" onAction="#goToRegister"/>
+
+</VBox>
