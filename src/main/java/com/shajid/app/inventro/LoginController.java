@@ -1,18 +1,13 @@
 package com.shajid.app.inventro;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-import javafx.scene.Node;
-import javafx.event.ActionEvent;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 
-public class MainController {
+public class LoginController {
 
-    // --- Login Page Fields ---
     @FXML
     private TextField loginUserId;
 
@@ -20,45 +15,41 @@ public class MainController {
     private PasswordField loginPassword;
 
     @FXML
+    private RadioButton adminRadio;
+
+    @FXML
+    private RadioButton customerRadio;
+
+    @FXML
+    private ToggleGroup roleGroup; // Automatically links to RadioButtons
+
+    @FXML
     private void handleLogin() {
         String id = loginUserId.getText();
         String pass = loginPassword.getText();
-        System.out.println("Login ID: " + id + " | Password: " + pass);
 
-        // TODO: Add database validation here
+        RadioButton selectedRole = (RadioButton) roleGroup.getSelectedToggle();
+        if (selectedRole == null) {
+            System.out.println("Please select a role!");
+            return;
+        }
+        String role = selectedRole.getText();
+
+        System.out.println("Login ID: " + id + " | Password: " + pass + " | Role: " + role);
+
+        // TODO: Add database validation based on role
+        if (role.equals("Admin")) {
+            // Open admin dashboard
+        } else if (role.equals("Customer")) {
+            // Open customer dashboard
+        }
     }
 
-    // --- Register Page Fields ---
     @FXML
-    private TextField regUserId;
-
-    @FXML
-    private PasswordField regPassword;
-
-    @FXML
-    private void handleRegister() {
-        String id = regUserId.getText();
-        String pass = regPassword.getText();
-        System.out.println("Register ID: " + id + " | Password: " + pass);
-
-        // TODO: Save new user to database here
-    }
-
-    // --- Switch from Login to Register ---
-    @FXML
-    private void goToRegister(ActionEvent event) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/register.fxml"));
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 400, 300));
+    private void goToRegister(javafx.event.ActionEvent event) throws Exception {
+        javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/fxml/register.fxml"));
+        javafx.stage.Stage stage = (javafx.stage.Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new javafx.scene.Scene(root, 800, 600));
         stage.setTitle("Inventro - Register");
-    }
-
-    // --- Switch from Register to Login ---
-    @FXML
-    private void goToLogin(ActionEvent event) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/login.fxml"));
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 400, 300));
-        stage.setTitle("Inventro - Login");
     }
 }
