@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="800" prefWidth="1200" style="-fx-background-color: linear-gradient(to bottom right, #07122B, #0B6B6B);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shajid.app.inventro.controller.DashboardController">
+    <children>
+        <VBox alignment="TOP_CENTER" spacing="20" AnchorPane.topAnchor="40" AnchorPane.leftAnchor="40" AnchorPane.rightAnchor="40">
+            <Label text="Admin Dashboard" textFill="white">
+                <font><Font size="30" /></font>
+            </Label>
+            <Label fx:id="welcomeLabel" text="Welcome, Admin" textFill="#00f2ea" />
+            <Button text="Logout" onAction="#onLogout" style="-fx-background-color: transparent; -fx-border-color:#00f2ea; -fx-text-fill:#00f2ea;" />
+        </VBox>
+    </children>
+</AnchorPane>

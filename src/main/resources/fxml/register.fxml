@@ -1,77 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.*?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.shajid.app.inventro.RegisterController"
-            prefWidth="1000" prefHeight="700"
-            style="-fx-background-color: #f0f4f7;">
+<AnchorPane prefHeight="800" prefWidth="1200" style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #081822, #0f3a4e);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shajid.app.inventro.controller.RegisterController">
 
-    <!-- Top: App Title -->
-    <top>
-        <Label text="Inventro - Customer Registration"
-               style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #333;"
-               BorderPane.alignment="CENTER"/>
-    </top>
+    <children>
 
-    <!-- Center: Input Fields -->
-    <center>
-        <VBox alignment="CENTER" spacing="20">
-            <GridPane hgap="15" vgap="20">
-                <columnConstraints>
-                    <ColumnConstraints halignment="RIGHT"/>
-                    <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-                </columnConstraints>
+        <Pane style="-fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
 
-                <Label text="Name:" style="-fx-font-size: 18px;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="regName" promptText="Enter full name"
-                           style="-fx-font-size: 16px; -fx-pref-width: 400px;"
-                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        <VBox alignment="TOP_CENTER" spacing="40" AnchorPane.bottomAnchor="40" AnchorPane.leftAnchor="40" AnchorPane.rightAnchor="40" AnchorPane.topAnchor="40">
 
-                <Label text="Age:" style="-fx-font-size: 18px;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <TextField fx:id="regAge" promptText="Enter age"
-                           style="-fx-font-size: 16px; -fx-pref-width: 400px;"
-                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+            <HBox alignment="CENTER_LEFT">
+                <Label text="Inventro" textFill="#00f2ea">
+                    <font>
+                        <Font name="System Bold" size="26" />
+                    </font>
+                </Label>
+            </HBox>
 
-                <Label text="Phone:" style="-fx-font-size: 18px;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <TextField fx:id="regPhone" promptText="Enter phone number"
-                           style="-fx-font-size: 16px; -fx-pref-width: 400px;"
-                           GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+            <VBox alignment="CENTER" spacing="6">
+                <Label text="Create Your Inventro Account" textFill="white" wrapText="true">
+                    <font>
+                        <Font name="System Bold" size="32" />
+                    </font>
+                </Label>
+                <Label text="Join and shop with ease" textFill="#00f2ea" wrapText="true">
+                    <font>
+                        <Font name="System Bold" size="22" />
+                    </font>
+                </Label>
+            </VBox>
 
-                <Label text="Address:" style="-fx-font-size: 18px;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <TextField fx:id="regAddress" promptText="Enter address"
-                           style="-fx-font-size: 16px; -fx-pref-width: 400px;"
-                           GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+            <VBox alignment="CENTER" maxWidth="900" prefWidth="700" spacing="14" style="-fx-background-color: #112233; -fx-background-radius: 20;                          -fx-padding: 24;                          -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 25, 0.3, 0, 10);">
 
-                <Label text="User ID:" style="-fx-font-size: 18px;" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                <TextField fx:id="regUserId" promptText="Enter ID"
-                           style="-fx-font-size: 16px; -fx-pref-width: 400px;"
-                           GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                <VBox alignment="CENTER" spacing="4">
+                    <Label text="Sign Up" textFill="white">
+                        <font>
+                            <Font size="22" />
+                        </font>
+                    </Label>
+                    <Label text="Fill in the details to create your account" textFill="#88ffffff" wrapText="true" />
+                </VBox>
 
-                <Label text="Password:" style="-fx-font-size: 18px;" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                <PasswordField fx:id="regPassword" promptText="Enter Password"
-                               style="-fx-font-size: 16px; -fx-pref-width: 400px;"
-                               GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                <!-- Full Name -->
+                <TextField fx:id="fullNameField" promptText="Enter your full name" style="-fx-background-color:#223344; -fx-text-fill:white;                                   -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12;                                   -fx-padding:10;" />
 
-                <Button text="Register" onAction="#handleRegister"
-                        style="-fx-font-size: 18px; -fx-padding: 10 50 10 50; -fx-background-color: #4caf50; -fx-text-fill: white;"
-                        GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-                <Button text="Back to Login" onAction="#goToLogin"
-                        style="-fx-font-size: 18px; -fx-padding: 10 50 10 50;"
-                        GridPane.rowIndex="6" GridPane.columnIndex="1"/>
-            </GridPane>
+                <!-- Age -->
+                <TextField fx:id="ageField" promptText="Enter your age" style="-fx-background-color:#223344; -fx-text-fill:white;                                   -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12;                                   -fx-padding:10;" />
+
+                <!-- Phone -->
+                <TextField fx:id="phoneField" promptText="Enter your phone number" style="-fx-background-color:#223344; -fx-text-fill:white;                                   -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12;                                   -fx-padding:10;" />
+
+                <!-- Address -->
+                <TextField fx:id="addressField" promptText="Enter your address" style="-fx-background-color:#223344; -fx-text-fill:white;                                   -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12;                                   -fx-padding:10;" />
+
+                <!-- Email -->
+                <TextField fx:id="emailField" promptText="Enter your email" style="-fx-background-color:#223344; -fx-text-fill:white;                                   -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12;                                   -fx-padding:10;" />
+
+                <!-- Password -->
+                <PasswordField fx:id="passwordField" promptText="Create a password" style="-fx-background-color:#223344; -fx-text-fill:white;                                       -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12;                                       -fx-padding:10;" />
+
+                <!-- Confirm Password -->
+                <PasswordField fx:id="confirmPasswordField" promptText="Confirm your password" style="-fx-background-color:#223344; -fx-text-fill:white;                                       -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12;                                       -fx-padding:10;" />
+
+                <!-- Register Button: wired to controller -->
+                <Button fx:id="registerButton" onAction="#onRegisterClick" prefHeight="44" style="-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);                                -fx-background-radius: 12; -fx-font-size: 16; -fx-font-weight:bold;                                -fx-text-fill:white;" text="Register" />
+
+                <!-- Already have account -->
+                <HBox alignment="CENTER" spacing="6">
+                    <Label text="Already have an account?" textFill="#88ffffff" />
+                    <Hyperlink fx:id="goToLoginLink" onAction="#goToLogin" text="Login" textFill="#00f2ea" />
+                </HBox>
+            </VBox>
+
+            <!-- FOOTER -->
+            <Label alignment="CENTER" text="© 2025 Inventro Ltd. All rights reserved." textFill="#66ffffff">
+                <font>
+                    <Font size="13" />
+                </font>
+            </Label>
+
         </VBox>
-    </center>
 
-    <!-- Bottom: Footer -->
-    <bottom>
-        <Label text="© 2025 Inventro. All rights reserved."
-               style="-fx-font-size: 14px;"
-               BorderPane.alignment="CENTER"/>
-    </bottom>
-
-    <padding>
-        <Insets top="40" right="40" bottom="40" left="40"/>
-    </padding>
-</BorderPane>
+    </children>
+</AnchorPane>

@@ -1,65 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.shajid.app.inventro.LoginController"
-            prefWidth="1000" prefHeight="700"
-            style="-fx-background-color: #f0f4f7;">
+<AnchorPane prefHeight="800" prefWidth="1200" style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #07122B, #0B6B6B);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shajid.app.inventro.controller.LoginController">
+    <children>
+        <Pane pickOnBounds="false" style="-fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
 
-    <!-- Top: App Title -->
-    <top>
-        <Label text="Inventro - Login"
-               style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #333;"
-               BorderPane.alignment="CENTER"/>
-    </top>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" pannable="true" style="-fx-background: transparent; -fx-background-color: transparent; -fx-border-color: transparent;" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="40" AnchorPane.leftAnchor="40" AnchorPane.rightAnchor="40" AnchorPane.topAnchor="40">
+            <content>
+                <VBox alignment="TOP_CENTER" maxWidth="1200" spacing="40">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Inventro" textFill="#00f2ea">
+                            <font>
+                                <Font name="System Bold" size="26" />
+                            </font>
+                        </Label>
+                    </HBox>
+                    <VBox alignment="CENTER" spacing="6">
+                        <Label text="Welcome to Inventro !" textFill="white" wrapText="true">
+                            <font>
+                                <Font name="System Bold" size="32" />
+                            </font>
+                        </Label>
+                        <Label text="Hey Buddy! Login to continue shopping" textFill="#00f2ea" wrapText="true">
+                            <font>
+                                <Font name="System Bold" size="22" />
+                            </font>
+                        </Label>
+                    </VBox>
 
-    <!-- Center: Input Fields -->
-    <center>
-        <VBox alignment="CENTER" spacing="20">
-            <GridPane hgap="15" vgap="20">
-                <columnConstraints>
-                    <ColumnConstraints halignment="RIGHT"/>
-                    <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-                </columnConstraints>
+                    <VBox alignment="CENTER" maxWidth="900" prefWidth="700" spacing="14" style="-fx-background-color: rgba(17,34,51,0.85); -fx-background-radius: 20; -fx-padding: 24; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 25, 0.3, 0, 10);">
+                        <VBox alignment="CENTER" spacing="4">
+                            <Label text="Login" textFill="white"><font><Font size="22" /></font></Label>
+                            <Label text="Enter your credentials to access your account" textFill="#88ffffff" wrapText="true" />
+                        </VBox>
 
-                <Label text="User ID:" style="-fx-font-size: 18px;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="loginUserId" promptText="Enter ID"
-                           style="-fx-font-size: 16px; -fx-pref-width: 300px;"
-                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                        <TextField fx:id="emailField" promptText="Enter your email" style="-fx-background-color:#223344; -fx-text-fill:white; -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12; -fx-padding:10;" />
+                        <PasswordField fx:id="passwordField" promptText="Enter your password" style="-fx-background-color:#223344; -fx-text-fill:white; -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12; -fx-padding:10;" />
 
-                <Label text="Password:" style="-fx-font-size: 18px;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <PasswordField fx:id="loginPassword" promptText="Enter Password"
-                               style="-fx-font-size: 16px; -fx-pref-width: 300px;"
-                               GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                        <!-- Ensure text is visible on dark background and keep non-editable -->
+                        <ComboBox fx:id="roleCombo" promptText="SELECT ROLE" style="-fx-background-color: #223344; -fx-text-fill: white; -fx-prompt-text-fill: #88ffffff; -fx-background-radius: 12;" />
 
-                <Label text="Role:" style="-fx-font-size: 18px;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <HBox spacing="20" GridPane.rowIndex="2" GridPane.columnIndex="1">
-                    <children>
-                        <RadioButton fx:id="adminRadio" text="Admin" toggleGroup="$roleGroup" style="-fx-font-size: 16px;"/>
-                        <RadioButton fx:id="customerRadio" text="Customer" toggleGroup="$roleGroup" style="-fx-font-size: 16px;"/>
-                    </children>
-                </HBox>
+                        <VBox alignment="CENTER" spacing="10">
+                            <Button fx:id="loginButton" onAction="#onLoginClick" prefHeight="44" style="-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4); -fx-background-radius: 12; -fx-font-size: 16; -fx-font-weight:bold; -fx-text-fill:white;" text="Login" />
+                            <Button fx:id="createAccountButton" onAction="#goToRegister" prefHeight="44" style="-fx-background-color: transparent; -fx-border-color:#00f2ea; -fx-border-radius:12; -fx-border-width:2; -fx-text-fill:#00f2ea; -fx-font-size:14;" text="Create Account" />
+                        </VBox>
+                    </VBox>
 
-                <Button text="Login" onAction="#handleLogin"
-                        style="-fx-font-size: 18px; -fx-padding: 10 50 10 50; -fx-background-color: #2196f3; -fx-text-fill: white;"
-                        GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <Button text="Go to Register" onAction="#goToRegister"
-                        style="-fx-font-size: 18px; -fx-padding: 10 50 10 50;"
-                        GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-            </GridPane>
-        </VBox>
-    </center>
-
-    <!-- Bottom: Footer -->
-    <bottom>
-        <Label text="© 2025 Inventro. All rights reserved."
-               style="-fx-font-size: 14px;"
-               BorderPane.alignment="CENTER"/>
-    </bottom>
-
-    <padding>
-        <Insets top="40" right="40" bottom="40" left="40"/>
-    </padding>
-</BorderPane>
+                    <Label alignment="CENTER" text="© 2025 Inventro Ltd. All rights reserved." textFill="#66ffffff">
+                        <font><Font size="13" /></font>
+                    </Label>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </children>
+</AnchorPane>
