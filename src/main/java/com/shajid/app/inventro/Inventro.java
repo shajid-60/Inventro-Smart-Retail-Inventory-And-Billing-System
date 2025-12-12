@@ -1,5 +1,6 @@
 package com.shajid.app.inventro;
 
+import com.shajid.app.inventro.database.DatabaseSetup;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,11 +11,11 @@ public class Inventro extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Load login.fxml
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/login.fxml"));
+        // Ensure DB and `users` table exist
+        DatabaseSetup.initialize();
 
-        // Set the scene
-        Scene scene = new Scene(root, 800, 600);
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/login.fxml"));
+        Scene scene = new Scene(root, 1200, 800);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Inventro - Login");
         primaryStage.show();

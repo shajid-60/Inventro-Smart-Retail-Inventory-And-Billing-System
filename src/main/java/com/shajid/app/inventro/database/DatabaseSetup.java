@@ -9,10 +9,13 @@ public class DatabaseSetup {
         String sql = """
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    fullName TEXT,
-                    email TEXT UNIQUE,
-                    password TEXT,
-                    role TEXT
+                    fullName TEXT NOT NULL,
+                    age INTEGER,
+                    phone TEXT,
+                    address TEXT,
+                    email TEXT UNIQUE NOT NULL,
+                    password TEXT NOT NULL,
+                    role TEXT NOT NULL
                 );
                 """;
 
@@ -21,7 +24,6 @@ public class DatabaseSetup {
 
             stmt.execute(sql);
             System.out.println("Users table created/verified.");
-
         } catch (Exception e) {
             System.out.println("DB Setup Error: " + e.getMessage());
         }

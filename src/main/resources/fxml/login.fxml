@@ -3,56 +3,123 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="800" prefWidth="1200" style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #07122B, #0B6B6B);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shajid.app.inventro.controller.LoginController">
+<AnchorPane prefHeight="800" prefWidth="1200"
+            style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #081822, #0f3a4e);"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.shajid.app.inventro.controller.LoginController">
+
     <children>
-        <Pane pickOnBounds="false" style="-fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+        <Pane style="-fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);"
+              AnchorPane.bottomAnchor="0"
+              AnchorPane.leftAnchor="0"
+              AnchorPane.rightAnchor="0"
+              AnchorPane.topAnchor="0" />
 
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" pannable="true" style="-fx-background: transparent; -fx-background-color: transparent; -fx-border-color: transparent;" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="40" AnchorPane.leftAnchor="40" AnchorPane.rightAnchor="40" AnchorPane.topAnchor="40">
-            <content>
-                <VBox alignment="TOP_CENTER" maxWidth="1200" spacing="40">
-                    <HBox alignment="CENTER_LEFT">
-                        <Label text="Inventro" textFill="#00f2ea">
-                            <font>
-                                <Font name="System Bold" size="26" />
-                            </font>
-                        </Label>
-                    </HBox>
-                    <VBox alignment="CENTER" spacing="6">
-                        <Label text="Welcome to Inventro !" textFill="white" wrapText="true">
-                            <font>
-                                <Font name="System Bold" size="32" />
-                            </font>
-                        </Label>
-                        <Label text="Hey Buddy! Login to continue shopping" textFill="#00f2ea" wrapText="true">
-                            <font>
-                                <Font name="System Bold" size="22" />
-                            </font>
-                        </Label>
-                    </VBox>
+        <VBox alignment="TOP_CENTER"
+              spacing="40"
+              AnchorPane.bottomAnchor="40"
+              AnchorPane.leftAnchor="40"
+              AnchorPane.rightAnchor="40"
+              AnchorPane.topAnchor="40">
 
-                    <VBox alignment="CENTER" maxWidth="900" prefWidth="700" spacing="14" style="-fx-background-color: rgba(17,34,51,0.85); -fx-background-radius: 20; -fx-padding: 24; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 25, 0.3, 0, 10);">
-                        <VBox alignment="CENTER" spacing="4">
-                            <Label text="Login" textFill="white"><font><Font size="22" /></font></Label>
-                            <Label text="Enter your credentials to access your account" textFill="#88ffffff" wrapText="true" />
-                        </VBox>
+            <HBox alignment="CENTER_LEFT">
+                <Label fx:id="inventroLabel"
+                       text="Inventro"
+                       textFill="#00f2ea">
+                    <font><Font name="System Bold" size="26" /></font>
+                </Label>
+            </HBox>
 
-                        <TextField fx:id="emailField" promptText="Enter your email" style="-fx-background-color:#223344; -fx-text-fill:white; -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12; -fx-padding:10;" />
-                        <PasswordField fx:id="passwordField" promptText="Enter your password" style="-fx-background-color:#223344; -fx-text-fill:white; -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12; -fx-padding:10;" />
+            <VBox alignment="CENTER" spacing="6">
+                <Label text="Welcome to Inventro !" textFill="white" wrapText="true">
+                    <font><Font name="System Bold" size="32" /></font>
+                </Label>
+                <Label fx:id="subTitleLabel"
+                       text="Hey Buddy! Login to continue shopping"
+                       textFill="#00f2ea"
+                       wrapText="true">
+                    <font><Font name="System Bold" size="22" /></font>
+                </Label>
+            </VBox>
 
-                        <!-- Ensure text is visible on dark background and keep non-editable -->
-                        <ComboBox fx:id="roleCombo" promptText="SELECT ROLE" style="-fx-background-color: #223344; -fx-text-fill: white; -fx-prompt-text-fill: #88ffffff; -fx-background-radius: 12;" />
+            <VBox alignment="CENTER"
+                  maxWidth="900"
+                  prefWidth="700"
+                  spacing="14"
+                  style="-fx-background-color: rgba(17,34,51,0.85);
+                         -fx-background-radius: 20;
+                         -fx-padding: 24;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 25, 0.3, 0, 10);">
 
-                        <VBox alignment="CENTER" spacing="10">
-                            <Button fx:id="loginButton" onAction="#onLoginClick" prefHeight="44" style="-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4); -fx-background-radius: 12; -fx-font-size: 16; -fx-font-weight:bold; -fx-text-fill:white;" text="Login" />
-                            <Button fx:id="createAccountButton" onAction="#goToRegister" prefHeight="44" style="-fx-background-color: transparent; -fx-border-color:#00f2ea; -fx-border-radius:12; -fx-border-width:2; -fx-text-fill:#00f2ea; -fx-font-size:14;" text="Create Account" />
-                        </VBox>
-                    </VBox>
-
-                    <Label alignment="CENTER" text="© 2025 Inventro Ltd. All rights reserved." textFill="#66ffffff">
-                        <font><Font size="13" /></font>
+                <VBox alignment="CENTER" spacing="4">
+                    <Label text="Login" textFill="white">
+                        <font><Font size="22" /></font>
                     </Label>
+                    <Label text="Enter your credentials to access your account"
+                           textFill="#88ffffff"
+                           wrapText="true" />
                 </VBox>
-            </content>
-        </ScrollPane>
+
+                <TextField fx:id="emailField"
+                           promptText="Enter your email"
+                           style="-fx-background-color:#223344;
+                                  -fx-text-fill:white;
+                                  -fx-prompt-text-fill:#88ffffff;
+                                  -fx-background-radius:12;
+                                  -fx-padding:10;" />
+
+                <PasswordField fx:id="passwordField"
+                               promptText="Enter your password"
+                               style="-fx-background-color:#223344;
+                                      -fx-text-fill:white;
+                                      -fx-prompt-text-fill:#88ffffff;
+                                      -fx-background-radius:12;
+                                      -fx-padding:10;" />
+
+                <ComboBox fx:id="roleCombo"
+                          promptText="SELECT ROLE"
+                          style="-fx-background-color: #223344;
+                                 -fx-text-fill: white;
+                                 -fx-prompt-text-fill: #88ffffff;
+                                 -fx-background-radius: 12;" />
+
+                <VBox alignment="CENTER" spacing="10">
+                    <Button fx:id="loginButton"
+                            onAction="#onLoginClick"
+                            prefHeight="44"
+                            style="-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);
+                                   -fx-background-radius: 12;
+                                   -fx-font-size: 16;
+                                   -fx-font-weight:bold;
+                                   -fx-text-fill:white;"
+                            text="Login" />
+
+                    <Button fx:id="createAccountButton"
+                            onAction="#goToRegister"
+                            prefHeight="44"
+                            style="-fx-background-color: transparent;
+                                   -fx-border-color:#00f2ea;
+                                   -fx-border-radius:12;
+                                   -fx-border-width:2;
+                                   -fx-text-fill:#00f2ea;
+                                   -fx-font-size:14;"
+                            text="Create Account" />
+                </VBox>
+
+                <Label fx:id="errorLabel"
+                       textFill="#ff6666"
+                       wrapText="true"
+                       style="-fx-font-size: 13;" />
+
+            </VBox>
+
+            <Label alignment="CENTER"
+                   text="© 2025 Inventro Ltd. All rights reserved."
+                   textFill="#66ffffff">
+                <font><Font size="13" /></font>
+            </Label>
+
+        </VBox>
     </children>
 </AnchorPane>

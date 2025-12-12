@@ -4,13 +4,26 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="800" prefWidth="1200" style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #081822, #0f3a4e);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shajid.app.inventro.controller.RegisterController">
+<AnchorPane prefHeight="800" prefWidth="1200"
+            style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #081822, #0f3a4e);"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.shajid.app.inventro.controller.RegisterController">
 
     <children>
 
-        <Pane style="-fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+        <Pane style="-fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);"
+              AnchorPane.bottomAnchor="0"
+              AnchorPane.leftAnchor="0"
+              AnchorPane.rightAnchor="0"
+              AnchorPane.topAnchor="0" />
 
-        <VBox alignment="TOP_CENTER" spacing="40" AnchorPane.bottomAnchor="40" AnchorPane.leftAnchor="40" AnchorPane.rightAnchor="40" AnchorPane.topAnchor="40">
+        <VBox alignment="TOP_CENTER"
+              spacing="40"
+              AnchorPane.bottomAnchor="40"
+              AnchorPane.leftAnchor="40"
+              AnchorPane.rightAnchor="40"
+              AnchorPane.topAnchor="40">
 
             <HBox alignment="CENTER_LEFT">
                 <Label text="Inventro" textFill="#00f2ea">
@@ -21,19 +34,30 @@
             </HBox>
 
             <VBox alignment="CENTER" spacing="6">
-                <Label text="Create Your Inventro Account" textFill="white" wrapText="true">
+                <Label text="Create Your Inventro Account"
+                       textFill="white"
+                       wrapText="true">
                     <font>
                         <Font name="System Bold" size="32" />
                     </font>
                 </Label>
-                <Label text="Join and shop with ease" textFill="#00f2ea" wrapText="true">
+                <Label text="Join and shop with ease"
+                       textFill="#00f2ea"
+                       wrapText="true">
                     <font>
                         <Font name="System Bold" size="22" />
                     </font>
                 </Label>
             </VBox>
 
-            <VBox alignment="CENTER" maxWidth="900" prefWidth="700" spacing="14" style="-fx-background-color: #112233; -fx-background-radius: 20;                          -fx-padding: 24;                          -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 25, 0.3, 0, 10);">
+            <VBox alignment="CENTER"
+                  maxWidth="900"
+                  prefWidth="700"
+                  spacing="14"
+                  style="-fx-background-color: #112233;
+                         -fx-background-radius: 20;
+                         -fx-padding: 24;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 25, 0.3, 0, 10);">
 
                 <VBox alignment="CENTER" spacing="4">
                     <Label text="Sign Up" textFill="white">
@@ -41,42 +65,111 @@
                             <Font size="22" />
                         </font>
                     </Label>
-                    <Label text="Fill in the details to create your account" textFill="#88ffffff" wrapText="true" />
+                    <Label text="Fill in the details to create your account"
+                           textFill="#88ffffff"
+                           wrapText="true" />
                 </VBox>
 
                 <!-- Full Name -->
-                <TextField fx:id="fullNameField" promptText="Enter your full name" style="-fx-background-color:#223344; -fx-text-fill:white;                                   -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12;                                   -fx-padding:10;" />
+                <TextField fx:id="fullNameField"
+                           promptText="Enter your full name"
+                           style="-fx-background-color:#223344;
+                                  -fx-text-fill:white;
+                                  -fx-prompt-text-fill:#88ffffff;
+                                  -fx-background-radius:12;
+                                  -fx-padding:10;" />
 
                 <!-- Age -->
-                <TextField fx:id="ageField" promptText="Enter your age" style="-fx-background-color:#223344; -fx-text-fill:white;                                   -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12;                                   -fx-padding:10;" />
+                <TextField fx:id="ageField"
+                           promptText="Enter your age"
+                           style="-fx-background-color:#223344;
+                                  -fx-text-fill:white;
+                                  -fx-prompt-text-fill:#88ffffff;
+                                  -fx-background-radius:12;
+                                  -fx-padding:10;" />
 
                 <!-- Phone -->
-                <TextField fx:id="phoneField" promptText="Enter your phone number" style="-fx-background-color:#223344; -fx-text-fill:white;                                   -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12;                                   -fx-padding:10;" />
+                <TextField fx:id="phoneField"
+                           promptText="Enter your phone number"
+                           style="-fx-background-color:#223344;
+                                  -fx-text-fill:white;
+                                  -fx-prompt-text-fill:#88ffffff;
+                                  -fx-background-radius:12;
+                                  -fx-padding:10;" />
 
                 <!-- Address -->
-                <TextField fx:id="addressField" promptText="Enter your address" style="-fx-background-color:#223344; -fx-text-fill:white;                                   -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12;                                   -fx-padding:10;" />
+                <TextField fx:id="addressField"
+                           promptText="Enter your address"
+                           style="-fx-background-color:#223344;
+                                  -fx-text-fill:white;
+                                  -fx-prompt-text-fill:#88ffffff;
+                                  -fx-background-radius:12;
+                                  -fx-padding:10;" />
 
                 <!-- Email -->
-                <TextField fx:id="emailField" promptText="Enter your email" style="-fx-background-color:#223344; -fx-text-fill:white;                                   -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12;                                   -fx-padding:10;" />
+                <TextField fx:id="emailField"
+                           promptText="Enter your email"
+                           style="-fx-background-color:#223344;
+                                  -fx-text-fill:white;
+                                  -fx-prompt-text-fill:#88ffffff;
+                                  -fx-background-radius:12;
+                                  -fx-padding:10;" />
 
                 <!-- Password -->
-                <PasswordField fx:id="passwordField" promptText="Create a password" style="-fx-background-color:#223344; -fx-text-fill:white;                                       -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12;                                       -fx-padding:10;" />
+                <PasswordField fx:id="passwordField"
+                               promptText="Create a password"
+                               style="-fx-background-color:#223344;
+                                      -fx-text-fill:white;
+                                      -fx-prompt-text-fill:#88ffffff;
+                                      -fx-background-radius:12;
+                                      -fx-padding:10;" />
 
                 <!-- Confirm Password -->
-                <PasswordField fx:id="confirmPasswordField" promptText="Confirm your password" style="-fx-background-color:#223344; -fx-text-fill:white;                                       -fx-prompt-text-fill:#88ffffff; -fx-background-radius:12;                                       -fx-padding:10;" />
+                <PasswordField fx:id="confirmPasswordField"
+                               promptText="Confirm your password"
+                               style="-fx-background-color:#223344;
+                                      -fx-text-fill:white;
+                                      -fx-prompt-text-fill:#88ffffff;
+                                      -fx-background-radius:12;
+                                      -fx-padding:10;" />
 
-                <!-- Register Button: wired to controller -->
-                <Button fx:id="registerButton" onAction="#onRegisterClick" prefHeight="44" style="-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);                                -fx-background-radius: 12; -fx-font-size: 16; -fx-font-weight:bold;                                -fx-text-fill:white;" text="Register" />
+                <!-- Hidden role combo, controller forces \`Customer\` -->
+                <ComboBox fx:id="roleCombo"
+                          visible="false"
+                          managed="false" />
+
+                <!-- Register Button -->
+                <Button fx:id="registerButton"
+                        onAction="#onRegisterClick"
+                        prefHeight="44"
+                        style="-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);
+                               -fx-background-radius: 12;
+                               -fx-font-size: 16;
+                               -fx-font-weight:bold;
+                               -fx-text-fill:white;"
+                        text="Register" />
+
+                <!-- Error label -->
+                <Label fx:id="errorLabel"
+                       textFill="#ff6666"
+                       wrapText="true"
+                       style="-fx-font-size: 13;" />
 
                 <!-- Already have account -->
                 <HBox alignment="CENTER" spacing="6">
-                    <Label text="Already have an account?" textFill="#88ffffff" />
-                    <Hyperlink fx:id="goToLoginLink" onAction="#goToLogin" text="Login" textFill="#00f2ea" />
+                    <Label text="Already have an account?"
+                           textFill="#88ffffff" />
+                    <Hyperlink fx:id="goToLoginLink"
+                               onAction="#goToLogin"
+                               text="Login"
+                               textFill="#00f2ea" />
                 </HBox>
             </VBox>
 
             <!-- FOOTER -->
-            <Label alignment="CENTER" text="© 2025 Inventro Ltd. All rights reserved." textFill="#66ffffff">
+            <Label alignment="CENTER"
+                   text="© 2025 Inventro Ltd. All rights reserved."
+                   textFill="#66ffffff">
                 <font>
                     <Font size="13" />
                 </font>

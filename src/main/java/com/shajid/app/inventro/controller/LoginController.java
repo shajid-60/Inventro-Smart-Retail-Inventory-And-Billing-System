@@ -1,14 +1,14 @@
-// language: java
 package com.shajid.app.inventro.controller;
 
 import com.shajid.app.inventro.database.SQLiteConnection;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -18,6 +18,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class LoginController {
+
+    private static final String ADMIN_EMAIL = "majharulshajid585@gmail.com";
+    private static final String ADMIN_PASSWORD = "shajid585";
 
     @FXML
     private TextField emailField;
@@ -33,90 +36,74 @@ public class LoginController {
 
     @FXML
     public void initialize() {
-        // \* only Admin and Customer
         roleCombo.getItems().setAll("Admin", "Customer");
-
-        // \* show "Select" before any role is chosen
-        roleCombo.setValue(null);
-        roleCombo.setPromptText("Select");
-        roleCombo.setEditable(false);
-
-        // \* list items style (dropdown)
-        roleCombo.setCellFactory(listView -> new ListCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item);
-                setStyle("-fx-text-fill: white; -fx-background-color: #223344;");
-            }
-        });
-
-        // \* selected item / prompt cell style
-        roleCombo.setButtonCell(new ListCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item);
-                setStyle("-fx-text-fill: white; -fx-background-color: #223344;");
-            }
-        });
+        roleCombo.setValue("Customer");
     }
 
     @FXML
-    void onLoginClick(ActionEvent event) {
-        String email = emailField.getText();
-        String pass = passwordField.getText();
+    private void onLoginClick(ActionEvent event) {
+        errorLabel.setText("");
+
+        String email = emailField.getText().trim();
+        String password = passwordField.getText();
         String role = roleCombo.getValue();
 
-        if (role == null || role.isBlank()) {
-            if (errorLabel != null) errorLabel.setText("Please select role.");
+        if (email.isEmpty() || password.isEmpty() || role == null) {
+            errorLabel.setText("Please enter email, password, and select a role.");
             return;
         }
 
-        if (email.isEmpty() || pass.isEmpty()) {
-            if (errorLabel != null) errorLabel.setText("Email and Password required.");
-            return;
-        }
-
-        try (Connection conn = SQLiteConnection.connect()) {
-            String sql = "SELECT * FROM users WHERE email = ? AND password = ? AND role = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, email);
-            stmt.setString(2, pass);
-            stmt.setString(3, role);
-
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                if (errorLabel != null) errorLabel.setText("Login Successful!");
-
-                // \* if Admin -> go to dashboard
-                if ("Admin".equals(role)) {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/dashboard.fxml"));
-                    Stage stage = (Stage) emailField.getScene().getWindow();
-                    stage.setScene(new Scene(loader.load(), 1200, 800));
+        try {
+            if ("Admin".equals(role)) {
+                // Hardcoded single admin
+                if (ADMIN_EMAIL.equals(email) && ADMIN_PASSWORD.equals(password)) {
+                    loadScene(event, "/fxml/dashboard.fxml", "Inventro - Admin Dashboard");
                 } else {
-                    // \* customer: stay or later route to customer page
-                    System.out.println("Logged in as Customer");
+                    errorLabel.setText("Incorrect admin email or password.");
                 }
             } else {
-                if (errorLabel != null) errorLabel.setText("Invalid credentials.");
-            }
+                // Customer from DB
+                try (Connection conn = SQLiteConnection.connect()) {
+                    String sql = "SELECT * FROM users WHERE email=? AND password=? AND role=?";
+                    PreparedStatement stmt = conn.prepareStatement(sql);
+                    stmt.setString(1, email);
+                    stmt.setString(2, password);
+                    stmt.setString(3, "Customer");
 
+                    ResultSet rs = stmt.executeQuery();
+
+                    if (rs.next()) {
+                        loadScene(event, "/fxml/customer_dashboard.fxml", "Inventro - Customer Dashboard");
+                    } else {
+                        errorLabel.setText("Incorrect email or password for customer.");
+                    }
+                }
+            }
         } catch (Exception e) {
-            if (errorLabel != null) errorLabel.setText("Database Error!");
             e.printStackTrace();
+            errorLabel.setText("Database or login error.");
         }
     }
 
+    private void loadScene(ActionEvent event, String fxmlPath, String title) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root, 1200, 800));
+        stage.setTitle(title);
+        stage.show();
+    }
+
     @FXML
-    void goToRegister(ActionEvent event) {
+    private void goToRegister(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/register.fxml"));
-            Stage stage = (Stage) emailField.getScene().getWindow();
-            stage.setScene(new Scene(loader.load(), 1200, 800));
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/register.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root, 1200, 800));
+            stage.setTitle("Inventro - Register");
+            stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            errorLabel.setText("Cannot open registration page.");
         }
     }
 }

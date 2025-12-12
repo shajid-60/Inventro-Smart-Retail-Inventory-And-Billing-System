@@ -5,8 +5,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
@@ -33,6 +37,9 @@ public class RegisterController {
     private PasswordField passwordField;
 
     @FXML
+    private PasswordField confirmPasswordField;
+
+    @FXML
     private ComboBox<String> roleCombo;
 
     @FXML
@@ -40,49 +47,65 @@ public class RegisterController {
 
     @FXML
     public void initialize() {
-        // roleCombo may not be present in FXML; guard against NPE
+        // Only Customer registration allowed
         if (roleCombo != null) {
-            roleCombo.getItems().addAll("Customer"); // only customer allowed
+            roleCombo.getItems().setAll("Customer");
             roleCombo.setValue("Customer");
         }
     }
 
     @FXML
     void onRegisterClick(ActionEvent event) {
-        String fullName = fullNameField != null ? fullNameField.getText() : "";
-        String age = ageField != null ? ageField.getText() : "";
-        String phone = phoneField != null ? phoneField.getText() : "";
-        String address = addressField != null ? addressField.getText() : "";
-        String email = emailField != null ? emailField.getText() : "";
-        String pass = passwordField != null ? passwordField.getText() : "";
-        String role = "Customer";
+        errorLabel.setText("");
 
-        if (fullName.isBlank() || email.isBlank() || pass.isBlank()) {
-            if (errorLabel != null) errorLabel.setText("Required fields missing.");
+        String fullName = fullNameField.getText().trim();
+        String age = ageField.getText().trim();
+        String phone = phoneField.getText().trim();
+        String address = addressField.getText().trim();
+        String email = emailField.getText().trim();
+        String password = passwordField.getText();
+        String confirmPassword = confirmPasswordField.getText();
+
+        String role = "Customer"; // enforce Customer
+
+        if (fullName.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            errorLabel.setText("Please fill in all required fields.");
+            return;
+        }
+
+        if (!password.equals(confirmPassword)) {
+            errorLabel.setText("Passwords do not match.");
             return;
         }
 
         try (Connection conn = SQLiteConnection.connect()) {
-            String sql = """
-                    INSERT INTO users(fullName, email, password, role)
-                    VALUES(?, ?, ?, ?)
-                    """;
-
+            String sql = "INSERT INTO users(fullName, age, phone, address, email, password, role) " +
+                    "VALUES(?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, fullName);
-            stmt.setString(2, email);
-            stmt.setString(3, pass);
-            stmt.setString(4, role);
+            // optional numeric fields
+            if (age.isEmpty()) {
+                stmt.setNull(2, java.sql.Types.INTEGER);
+            } else {
+                stmt.setInt(2, Integer.parseInt(age));
+            }
+            stmt.setString(3, phone);
+            stmt.setString(4, address);
+            stmt.setString(5, email);
+            stmt.setString(6, password);
+            stmt.setString(7, role);
 
             stmt.executeUpdate();
 
-            if (errorLabel != null) errorLabel.setText("Registration Successful!");
-
-            // navigate back to login
+            // After successful registration, go back to login
             goToLogin(event);
 
         } catch (Exception e) {
-            if (errorLabel != null) errorLabel.setText("User already exists!");
+            if (e.getMessage() != null && e.getMessage().contains("UNIQUE constraint failed")) {
+                errorLabel.setText("Email already registered.");
+            } else {
+                errorLabel.setText("Database error.");
+            }
             e.printStackTrace();
         }
     }
@@ -90,21 +113,16 @@ public class RegisterController {
     @FXML
     void goToLogin(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
-            // pick a non-null node to obtain the current stage
-            Node anyNode = (fullNameField != null) ? fullNameField : (emailField != null ? emailField : null);
-            Stage stage;
-            if (anyNode != null) {
-                stage = (Stage) anyNode.getScene().getWindow();
-            } else if (event != null && event.getSource() instanceof Node) {
-                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            } else {
-                // last-resort: create a new stage (shouldn't happen in normal usage)
-                stage = new Stage();
-            }
-            stage.setScene(new Scene(loader.load(), 1200, 800));
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/login.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root, 1200, 800));
+            stage.setTitle("Inventro - Login");
+            stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            if (errorLabel != null) {
+                errorLabel.setText("Cannot open login page.");
+            }
         }
     }
 }

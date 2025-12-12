@@ -1,16 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="800" prefWidth="1200" style="-fx-background-color: linear-gradient(to bottom right, #07122B, #0B6B6B);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shajid.app.inventro.controller.DashboardController">
-    <children>
-        <VBox alignment="TOP_CENTER" spacing="20" AnchorPane.topAnchor="40" AnchorPane.leftAnchor="40" AnchorPane.rightAnchor="40">
-            <Label text="Admin Dashboard" textFill="white">
-                <font><Font size="30" /></font>
-            </Label>
-            <Label fx:id="welcomeLabel" text="Welcome, Admin" textFill="#00f2ea" />
-            <Button text="Logout" onAction="#onLogout" style="-fx-background-color: transparent; -fx-border-color:#00f2ea; -fx-text-fill:#00f2ea;" />
+<BorderPane style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #081822, #0f3a4e);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shajid.app.inventro.controller.DashboardController">
+
+    <!-- TOP NAV BAR -->
+    <top>
+        <HBox spacing="10" style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
+            <Label fx:id="inventroLabel" style="-fx-text-fill:#00f2ea; -fx-font-size:28px; -fx-font-weight:bold;" text="Inventro" />
+            <Region HBox.hgrow="ALWAYS" />
+        </HBox>
+    </top>
+
+    <!-- MAIN PAGE CONTENT -->
+    <center>
+        <VBox spacing="25" style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
+
+            <!-- TOP CARDS ROW -->
+            <HBox spacing="20">
+
+                <!-- CARD 1 -->
+                <VBox style="-fx-background-color:#FFFFFF; -fx-padding:20; -fx-pref-width:250; -fx-border-color:#e0e0e0; -fx-border-radius:8; -fx-background-radius:8;">
+                    <Label style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:#081822;" text="Total Products" />
+                    <Label fx:id="totalProductsLabel" style="-fx-font-size:32px; -fx-font-weight:bold; -fx-text-fill:#081822;" text="0" />
+                </VBox>
+
+                <!-- CARD 2 -->
+                <VBox style="-fx-background-color:#FFFFFF; -fx-padding:20; -fx-pref-width:250; -fx-border-color:#e0e0e0; -fx-border-radius:8; -fx-background-radius:8;">
+                    <Label style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:#081822;" text="Low Stock" />
+                    <Label fx:id="lowStockLabel" style="-fx-font-size:32px; -fx-font-weight:bold; -fx-text-fill:#E9B000;" text="0" />
+                </VBox>
+
+                <!-- CARD 3 -->
+                <VBox style="-fx-background-color:#FFFFFF; -fx-padding:20; -fx-pref-width:250; -fx-border-color:#e0e0e0; -fx-border-radius:8; -fx-background-radius:8;">
+                    <Label style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:#081822;" text="Out of Stock" />
+                    <Label fx:id="outOfStockLabel" style="-fx-font-size:32px; -fx-font-weight:bold; -fx-text-fill:#C70039;" text="0" />
+                </VBox>
+
+                <!-- CARD 4 -->
+                <VBox style="-fx-background-color:#FFFFFF; -fx-padding:20; -fx-pref-width:250; -fx-border-color:#e0e0e0; -fx-border-radius:8; -fx-background-radius:8;">
+                    <Label style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:#081822;" text="Suppliers" />
+                    <Label fx:id="suppliersLabel" style="-fx-font-size:32px; -fx-font-weight:bold; -fx-text-fill:#081822;" text="0" />
+                </VBox>
+
+            </HBox>
+
+            <!-- CONTENT AREA -->
+            <BorderPane>
+
+                <!-- LEFT SUMMARY PANEL -->
+                <left>
+                    <VBox spacing="20" style="-fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%); -fx-padding: 30; -fx-pref-width: 300;">
+
+                        <Label style="-fx-text-fill:white; -fx-font-size:22px; -fx-font-weight:bold;" text="Value of Stock" />
+
+                        <Label fx:id="stockValueLabel" style="-fx-text-fill:white; -fx-font-size:30px; -fx-font-weight:bold;" text="" />
+
+                        <VBox spacing="10" style="-fx-padding:20 0 0 0;">
+                            <Label style="-fx-text-fill:#B5C7E3; -fx-font-size:16px;" text="Stock Purchases" />
+
+                            <Label style="-fx-text-fill:white; -fx-font-size:14px;" text="Unfulfilled:" />
+                            <Label fx:id="unfulfilledLabel" style="-fx-text-fill:#E9B000; -fx-font-size:20px;" text="0" />
+
+                            <Label style="-fx-text-fill:white; -fx-font-size:14px; -fx-padding:20 0 0 0;" text="Received:" />
+                            <Label fx:id="receivedLabel" style="-fx-text-fill:#4CAF50; -fx-font-size:20px;" text="0" />
+                        </VBox>
+
+                    </VBox>
+                </left>
+
+                <!-- LARGE CHART AREA -->
+                <center>
+                    <VBox spacing="10" style="-fx-padding:20; -fx-background-color:white;">
+
+                        <Label style="-fx-font-size:24px; -fx-font-weight:bold; -fx-padding:10; -fx-text-fill:#081822;" text="Warehouse Stock" />
+
+                        <BarChart fx:id="stockChart" prefHeight="450" prefWidth="800">
+                            <xAxis>
+                                <CategoryAxis label="Product" />
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Quantity" />
+                            </yAxis>
+                        </BarChart>
+
+                    </VBox>
+                </center>
+
+            </BorderPane>
         </VBox>
-    </children>
-</AnchorPane>
+    </center>
+
+</BorderPane>

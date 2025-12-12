@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+        <?import javafx.scene.control.*?>
+        <?import javafx.scene.layout.*?>
+        <?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.shajid.app.inventro.controller.CustomerDashboardController"
+            style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #081822, #0f3a4e);">
+
+    <top>
+        <HBox spacing="10" style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
+            <Label text="Inventro" textFill="#00f2ea">
+                <font>
+                    <Font name="System Bold" size="26"/>
+                </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Shopping" textFill="white">
+                <font>
+                    <Font size="20"/>
+                </font>
+            </Label>
+        </HBox>
+    </top>
+
+    <center>
+        <Label text="Customer shopping page goes here"
+               textFill="white">
+            <font>
+                <Font size="24"/>
+            </font>
+        </Label>
+    </center>
+
+</BorderPane>
