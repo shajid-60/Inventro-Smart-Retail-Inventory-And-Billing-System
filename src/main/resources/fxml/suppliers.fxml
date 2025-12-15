@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.shajid.app.inventro.controller.SuppliersController"
+            style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #081822, #0f3a4e);">
+
+    <top>
+        <HBox spacing="10"
+              style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
+            <Label text="Inventro"
+                   textFill="#00f2ea">
+                <font>
+                    <Font name="System Bold" size="26"/>
+                </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Suppliers"
+                   textFill="white">
+                <font>
+                    <Font size="20"/>
+                </font>
+            </Label>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="20"
+              style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
+
+            <HBox spacing="10">
+                <TextField fx:id="searchField"
+                           promptText="Search suppliers..."
+                           style="-fx-background-color:#223344;
+                                  -fx-text-fill:white;
+                                  -fx-prompt-text-fill:#88ffffff;
+                                  -fx-background-radius:12;
+                                  -fx-padding:10;"/>
+                <Button text="Search"
+                        onAction="#onSearch"
+                        style="-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);
+                               -fx-background-radius: 12;
+                               -fx-text-fill:white;
+                               -fx-font-weight:bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Add Supplier"
+                        onAction="#onAddSupplier"
+                        style="-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);
+                               -fx-background-radius: 12;
+                               -fx-text-fill:white;
+                               -fx-font-weight:bold;"/>
+            </HBox>
+
+            <TableView fx:id="suppliersTable"
+                       style="-fx-background-color:#FFFFFF;
+                              -fx-background-radius:8;
+                              -fx-border-radius:8;">
+                <columns>
+                    <TableColumn fx:id="colName" text="Name" prefWidth="200"/>
+                    <TableColumn fx:id="colPhone" text="Phone" prefWidth="150"/>
+                    <TableColumn fx:id="colEmail" text="Email" prefWidth="200"/>
+                    <TableColumn fx:id="colAddress" text="Address" prefWidth="250"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button text="Edit"
+                        onAction="#onEditSupplier"
+                        style="-fx-background-color:#223344;
+                               -fx-text-fill:white;
+                               -fx-background-radius:12;"/>
+                <Button text="Delete"
+                        onAction="#onDeleteSupplier"
+                        style="-fx-background-color:#C70039;
+                               -fx-text-fill:white;
+                               -fx-background-radius:12;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Back to Dashboard"
+                        onAction="#goToDashboard"
+                        style="-fx-background-color: transparent;
+                               -fx-border-color:#00f2ea;
+                               -fx-border-radius:12;
+                               -fx-border-width:2;
+                               -fx-text-fill:#00f2ea;"/>
+            </HBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

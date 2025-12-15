@@ -17,15 +17,24 @@ public class DatabaseSetup {
                     password TEXT NOT NULL,
                     role TEXT NOT NULL
                 );
+
+                CREATE TABLE IF NOT EXISTS products (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    category TEXT,
+                    stock INTEGER NOT NULL DEFAULT 0,
+                    price REAL NOT NULL DEFAULT 0.0
+                );
                 """;
 
         try (Connection conn = SQLiteConnection.connect();
              Statement stmt = conn.createStatement()) {
 
-            stmt.execute(sql);
-            System.out.println("Users table created/verified.");
+            stmt.executeUpdate(sql);
+            System.out.println("Users and products tables created/verified.");
         } catch (Exception e) {
             System.out.println("DB Setup Error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.shajid.app.inventro.controller.OrdersController"
+            style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #081822, #0f3a4e);">
+
+    <top>
+        <HBox spacing="10"
+              style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
+            <Label text="Inventro"
+                   textFill="#00f2ea">
+                <font>
+                    <Font name="System Bold" size="26"/>
+                </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Stock Orders"
+                   textFill="white">
+                <font>
+                    <Font size="20"/>
+                </font>
+            </Label>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="20"
+              style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
+
+            <HBox spacing="10">
+                <ComboBox fx:id="statusFilter"
+                          promptText="Filter by status"
+                          style="-fx-background-color:#223344;
+                                 -fx-text-fill:white;
+                                 -fx-prompt-text-fill:#88ffffff;
+                                 -fx-background-radius:12;
+                                 -fx-padding:6;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="New Purchase Order"
+                        onAction="#onNewOrder"
+                        style="-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);
+                               -fx-background-radius: 12;
+                               -fx-text-fill:white;
+                               -fx-font-weight:bold;"/>
+            </HBox>
+
+            <TableView fx:id="ordersTable"
+                       style="-fx-background-color:#FFFFFF;
+                              -fx-background-radius:8;
+                              -fx-border-radius:8;">
+                <columns>
+                    <TableColumn fx:id="colId" text="Order \#" prefWidth="80"/>
+                    <TableColumn fx:id="colSupplier" text="Supplier" prefWidth="200"/>
+                    <TableColumn fx:id="colDate" text="Date" prefWidth="150"/>
+                    <TableColumn fx:id="colTotal" text="Total" prefWidth="100"/>
+                    <TableColumn fx:id="colStatus" text="Status" prefWidth="120"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button text="Mark as Received"
+                        onAction="#onMarkReceived"
+                        style="-fx-background-color:#4CAF50;
+                               -fx-text-fill:white;
+                               -fx-background-radius:12;"/>
+                <Button text="Cancel Order"
+                        onAction="#onCancelOrder"
+                        style="-fx-background-color:#C70039;
+                               -fx-text-fill:white;
+                               -fx-background-radius:12;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Back to Dashboard"
+                        onAction="#goToDashboard"
+                        style="-fx-background-color: transparent;
+                               -fx-border-color:#00f2ea;
+                               -fx-border-radius:12;
+                               -fx-border-width:2;
+                               -fx-text-fill:#00f2ea;"/>
+            </HBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>
