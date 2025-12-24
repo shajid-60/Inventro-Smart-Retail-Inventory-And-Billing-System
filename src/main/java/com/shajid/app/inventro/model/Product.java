@@ -1,87 +1,34 @@
 package com.shajid.app.inventro.model;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
 public class Product {
+    private Integer id;
+    private String name;
+    private String category;
+    private int stock;
+    private double price;
 
-    private final IntegerProperty id = new SimpleIntegerProperty(this, "id");
-    private final StringProperty name = new SimpleStringProperty(this, "name");
-    private final StringProperty category = new SimpleStringProperty(this, "category");
-    private final IntegerProperty stock = new SimpleIntegerProperty(this, "stock");
-    private final DoubleProperty price = new SimpleDoubleProperty(this, "price");
+    public Product() {}
 
-    public Product() {
-    }
-
-    public Product(int id, String name, String category, int stock, double price) {
-        this.id.set(id);
-        this.name.set(name);
-        this.category.set(category);
-        this.stock.set(stock);
-        this.price.set(price);
+    public Product(Integer id, String name, String category, int stock, double price) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.stock = stock;
+        this.price = price;
     }
 
-    public Product(String name, String category, int stock, double price) {
-        this(0, name, category, stock, price);
-    }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
-    // id
-    public int getId() {
-        return id.get();
-    }
-    public void setId(int id) {
-        this.id.set(id);
-    }
-    public IntegerProperty idProperty() {
-        return id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    // name
-    public String getName() {
-        return name.get();
-    }
-    public void setName(String name) {
-        this.name.set(name);
-    }
-    public StringProperty nameProperty() {
-        return name;
-    }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
-    // category
-    public String getCategory() {
-        return category.get();
-    }
-    public void setCategory(String category) {
-        this.category.set(category);
-    }
-    public StringProperty categoryProperty() {
-        return category;
-    }
+    public int getStock() { return stock; }
+    public void setStock(int stock) { this.stock = stock; }
 
-    // stock
-    public int getStock() {
-        return stock.get();
-    }
-    public void setStock(int stock) {
-        this.stock.set(stock);
-    }
-    public IntegerProperty stockProperty() {
-        return stock;
-    }
-
-    // price
-    public double getPrice() {
-        return price.get();
-    }
-    public void setPrice(double price) {
-        this.price.set(price);
-    }
-    public DoubleProperty priceProperty() {
-        return price;
-    }
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
 }

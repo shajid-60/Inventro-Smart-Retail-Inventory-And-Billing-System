@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.12"
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.shajid.app.inventro.controller.ProductsController"
             style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #081822, #0f3a4e);">
@@ -12,24 +12,18 @@
     <top>
         <HBox spacing="10"
               style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
-            <Label text="Inventro"
-                   textFill="#00f2ea">
-                <font>
-                    <Font name="System Bold" size="26"/>
-                </font>
+            <Label text="Inventro" textFill="#00f2ea">
+                <font><Font name="System Bold" size="26"/></font>
             </Label>
             <Region HBox.hgrow="ALWAYS"/>
-            <Label text="Products"
-                   textFill="white">
-                <font>
-                    <Font size="20"/>
-                </font>
+            <Label text="Products" textFill="white">
+                <font><Font size="20"/></font>
             </Label>
         </HBox>
     </top>
 
     <center>
-        <VBox spacing="20"
+        <VBox spacing="14"
               style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
 
             <HBox spacing="10">
@@ -40,26 +34,34 @@
                                   -fx-prompt-text-fill:#88ffffff;
                                   -fx-background-radius:12;
                                   -fx-padding:10;"/>
-                <Button text="Search"
-                        onAction="#onSearch"
-                        style="-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);
-                               -fx-background-radius: 12;
-                               -fx-text-fill:white;
-                               -fx-font-weight:bold;"/>
+
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button text="Add Product"
-                        onAction="#onAddProduct"
+
+                <Button text="Import from PDF"
+                        onAction="#onImportFromPdf"
                         style="-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);
                                -fx-background-radius: 12;
                                -fx-text-fill:white;
                                -fx-font-weight:bold;"/>
             </HBox>
 
+            <HBox spacing="10">
+                <TextField fx:id="addNameField" promptText="Name" />
+                <TextField fx:id="addCategoryField" promptText="Category" />
+                <TextField fx:id="addStockField" promptText="Stock" />
+                <TextField fx:id="addPriceField" promptText="Price" />
+                <Button text="Add Product" onAction="#onAddProduct" />
+                <Button text="Save" onAction="#onSaveProducts" />
+            </HBox>
+
             <TableView fx:id="productsTable"
+                       VBox.vgrow="ALWAYS"
+                       columnResizePolicy="CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS"
                        style="-fx-background-color:#FFFFFF;
                               -fx-background-radius:8;
                               -fx-border-radius:8;">
                 <columns>
+                    <TableColumn fx:id="colId" text="ID" prefWidth="70"/>
                     <TableColumn fx:id="colName" text="Name" prefWidth="200"/>
                     <TableColumn fx:id="colCategory" text="Category" prefWidth="150"/>
                     <TableColumn fx:id="colStock" text="Stock" prefWidth="80"/>
@@ -68,16 +70,6 @@
             </TableView>
 
             <HBox spacing="10" alignment="CENTER_RIGHT">
-                <Button text="Edit"
-                        onAction="#onEditProduct"
-                        style="-fx-background-color:#223344;
-                               -fx-text-fill:white;
-                               -fx-background-radius:12;"/>
-                <Button text="Delete"
-                        onAction="#onDeleteProduct"
-                        style="-fx-background-color:#C70039;
-                               -fx-text-fill:white;
-                               -fx-background-radius:12;"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <Button text="Back to Dashboard"
                         onAction="#goToDashboard"
@@ -87,7 +79,6 @@
                                -fx-border-width:2;
                                -fx-text-fill:#00f2ea;"/>
             </HBox>
-
         </VBox>
     </center>
 

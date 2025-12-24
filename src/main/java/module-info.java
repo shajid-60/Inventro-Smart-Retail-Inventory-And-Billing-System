@@ -3,6 +3,7 @@ module com.shajid.app.inventro {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires org.apache.pdfbox;
 
     opens com.shajid.app.inventro.controller to javafx.fxml;
     exports com.shajid.app.inventro;

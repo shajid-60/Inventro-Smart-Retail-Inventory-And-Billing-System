@@ -6,7 +6,7 @@
 
 <AnchorPane prefHeight="800" prefWidth="1200"
             style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #081822, #0f3a4e);"
-            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns="http://javafx.com/javafx/21.0.6"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.shajid.app.inventro.controller.RegisterController">
 

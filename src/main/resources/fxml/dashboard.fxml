@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-        <?import javafx.scene.chart.*?>
-        <?import javafx.scene.control.*?>
-        <?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #081822, #0f3a4e);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shajid.app.inventro.controller.DashboardController">
+<BorderPane style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #081822, #0f3a4e);"
+            xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.shajid.app.inventro.controller.DashboardController">
 
     <top>
         <HBox spacing="10" style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
@@ -69,10 +72,10 @@
 
                         <BarChart fx:id="stockChart" prefHeight="450" prefWidth="650">
                             <xAxis>
-                                <CategoryAxis label="Product" />
+                                <CategoryAxis fx:id="stockChartXAxis" label="Product" />
                             </xAxis>
                             <yAxis>
-                                <NumberAxis label="Quantity" />
+                                <NumberAxis fx:id="stockChartYAxis" label="Quantity" />
                             </yAxis>
                         </BarChart>
 
