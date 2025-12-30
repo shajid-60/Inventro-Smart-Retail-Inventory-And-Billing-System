@@ -1,4 +1,3 @@
-// src/main/java/com/shajid/app/inventro/database/OrderDao.java
 package com.shajid.app.inventro.database;
 
 import java.sql.*;
@@ -13,20 +12,26 @@ public final class OrderDao {
         public final String date;
         public final double total;
         public final String status;
+        public final double revenue;
 
         public OrderRecord(int id, String supplier, String date, double total, String status) {
+            this(id, supplier, date, total, status, 0.0);
+        }
+
+        public OrderRecord(int id, String supplier, String date, double total, String status, double revenue) {
             this.id = id;
             this.supplier = supplier;
             this.date = date;
             this.total = total;
             this.status = status;
+            this.revenue = revenue;
         }
     }
 
     private OrderDao() {}
 
     public static List<OrderRecord> findAll() throws SQLException {
-        String sql = "SELECT id, supplier, date, total, status FROM orders ORDER BY id DESC";
+        String sql = "SELECT id, supplier, date, total, status, revenue FROM orders ORDER BY id DESC";
         List<OrderRecord> out = new ArrayList<>();
 
         try (Connection conn = SQLiteConnection.connect();
@@ -39,7 +44,8 @@ public final class OrderDao {
                         rs.getString("supplier"),
                         rs.getString("date"),
                         rs.getDouble("total"),
-                        rs.getString("status")
+                        rs.getString("status"),
+                        rs.getDouble("revenue")
                 ));
             }
         }
@@ -47,7 +53,7 @@ public final class OrderDao {
     }
 
     public static void insertAll(List<OrderRecord> orders) throws SQLException {
-        String sql = "INSERT INTO orders(supplier, date, total, status) VALUES(?, ?, ?, ?)";
+        String sql = "INSERT INTO orders(supplier, date, total, status, revenue) VALUES(?, ?, ?, ?, ?)";
 
         try (Connection conn = SQLiteConnection.connect();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -59,6 +65,7 @@ public final class OrderDao {
                     ps.setString(2, o.date);
                     ps.setDouble(3, o.total);
                     ps.setString(4, o.status);
+                    ps.setDouble(5, o.revenue);
                     ps.addBatch();
                 }
                 ps.executeBatch();

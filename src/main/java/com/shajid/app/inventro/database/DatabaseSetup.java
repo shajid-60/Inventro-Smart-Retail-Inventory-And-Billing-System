@@ -1,4 +1,3 @@
-// src/main/java/com/shajid/app/inventro/database/DatabaseSetup.java
 package com.shajid.app.inventro.database;
 
 import java.sql.Connection;
@@ -9,6 +8,10 @@ public class DatabaseSetup {
     public static void initialize() {
         String sql = """
                 PRAGMA foreign_keys = ON;
+
+                DROP TABLE IF EXISTS orders;
+                DROP TABLE IF EXISTS products;
+                DROP TABLE IF EXISTS users;
 
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,7 +37,8 @@ public class DatabaseSetup {
                     supplier TEXT NOT NULL,
                     date TEXT NOT NULL,
                     total REAL NOT NULL DEFAULT 0.0,
-                    status TEXT NOT NULL
+                    status TEXT NOT NULL,
+                    revenue REAL NOT NULL DEFAULT 0.0
                 );
                 """;
 
@@ -42,7 +46,8 @@ public class DatabaseSetup {
              Statement stmt = conn.createStatement()) {
 
             stmt.executeUpdate(sql);
-            System.out.println("Users, products, and orders tables created/verified.");
+
+            System.out.println("Fresh DB created: users, products, orders are empty.");
         } catch (Exception e) {
             System.out.println("DB Setup Error: " + e.getMessage());
             e.printStackTrace();

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.shajid.app.inventro.controller.BillingController"
+            style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #081822, #0f3a4e);">
+
+    <top>
+        <HBox spacing="10"
+              style="-fx-padding:20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
+            <Label text="Inventro" textFill="#00f2ea">
+                <font><Font name="System Bold" size="26"/></font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Billing" textFill="white">
+                <font><Font size="20"/></font>
+            </Label>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="14"
+              alignment="CENTER"
+              style="-fx-padding:20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
+            <Label text="Billing Page" textFill="white">
+                <font><Font size="22"/></font>
+            </Label>
+            <Button text="Back to Shopping"
+                    onAction="#onBackToCustomer"
+                    style="-fx-background-color: transparent; -fx-border-color:#00f2ea; -fx-border-radius:12; -fx-border-width:2; -fx-text-fill:#00f2ea; -fx-font-weight:bold;"/>
+        </VBox>
+    </center>
+
+</BorderPane>

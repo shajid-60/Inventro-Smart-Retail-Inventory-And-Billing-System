@@ -1,119 +1,150 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #081822, #0f3a4e);"
-            xmlns="http://javafx.com/javafx/21.0.6"
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.shajid.app.inventro.controller.DashboardController">
+            fx:controller="com.shajid.app.inventro.controller.DashboardController"
+            style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #081822, #0f3a4e);">
 
     <top>
-        <HBox spacing="10" style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
-            <Label fx:id="inventroLabel" style="-fx-text-fill:#00f2ea; -fx-font-size:28px; -fx-font-weight:bold;" text="Inventro" />
-            <Region HBox.hgrow="ALWAYS" />
+        <HBox spacing="10"
+              style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
+            <Label text="Inventro" textFill="#00f2ea">
+                <font>
+                    <Font name="System Bold" size="26"/>
+                </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Admin Dashboard" textFill="white">
+                <font>
+                    <Font size="20"/>
+                </font>
+            </Label>
         </HBox>
     </top>
 
     <center>
-        <VBox spacing="25" style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
+        <VBox spacing="18"
+              style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
 
-            <HBox spacing="20">
-
-                <VBox style="-fx-background-color:#FFFFFF; -fx-padding:20; -fx-pref-width:250; -fx-border-color:#e0e0e0; -fx-border-radius:8; -fx-background-radius:8;">
-                    <Label style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:#081822;" text="Total Products" />
-                    <Label fx:id="totalProductsLabel" style="-fx-font-size:32px; -fx-font-weight:bold; -fx-text-fill:#081822;" text="0" />
+            <!-- Summary cards row -->
+            <HBox spacing="18">
+                <VBox spacing="4"
+                      style="-fx-background-color: rgba(17,34,51,0.85); -fx-background-radius: 16; -fx-padding: 16;"
+                      HBox.hgrow="ALWAYS">
+                    <Label text="Total Products" textFill="#88ffffff">
+                        <font>
+                            <Font size="14"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="totalProductsLabel" text="0" textFill="#00f2ea">
+                        <font>
+                            <Font name="System Bold" size="26"/>
+                        </font>
+                    </Label>
                 </VBox>
 
-                <VBox style="-fx-background-color:#FFFFFF; -fx-padding:20; -fx-pref-width:250; -fx-border-color:#e0e0e0; -fx-border-radius:8; -fx-background-radius:8;">
-                    <Label style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:#081822;" text="Low Stock" />
-                    <Label fx:id="lowStockLabel" style="-fx-font-size:32px; -fx-font-weight:bold; -fx-text-fill:#E9B000;" text="0" />
+                <VBox spacing="4"
+                      style="-fx-background-color: rgba(17,34,51,0.85); -fx-background-radius: 16; -fx-padding: 16;"
+                      HBox.hgrow="ALWAYS">
+                    <Label text="Low Stock (1\-5)" textFill="#88ffffff">
+                        <font>
+                            <Font size="14"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="lowStockLabel" text="0" textFill="#FFC300">
+                        <font>
+                            <Font name="System Bold" size="26"/>
+                        </font>
+                    </Label>
                 </VBox>
 
-                <VBox style="-fx-background-color:#FFFFFF; -fx-padding:20; -fx-pref-width:250; -fx-border-color:#e0e0e0; -fx-border-radius:8; -fx-background-radius:8;">
-                    <Label style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:#081822;" text="Out of Stock" />
-                    <Label fx:id="outOfStockLabel" style="-fx-font-size:32px; -fx-font-weight:bold; -fx-text-fill:#C70039;" text="0" />
+                <VBox spacing="4"
+                      style="-fx-background-color: rgba(17,34,51,0.85); -fx-background-radius: 16; -fx-padding: 16;"
+                      HBox.hgrow="ALWAYS">
+                    <Label text="Out of Stock" textFill="#88ffffff">
+                        <font>
+                            <Font size="14"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="outOfStockLabel" text="0" textFill="#C70039">
+                        <font>
+                            <Font name="System Bold" size="26"/>
+                        </font>
+                    </Label>
                 </VBox>
 
-                <VBox style="-fx-background-color:#FFFFFF; -fx-padding:20; -fx-pref-width:250; -fx-border-color:#e0e0e0; -fx-border-radius:8; -fx-background-radius:8;">
-                    <Label style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:#081822;" text="Suppliers" />
-                    <Label fx:id="suppliersLabel" style="-fx-font-size:32px; -fx-font-weight:bold; -fx-text-fill:#081822;" text="0" />
+                <VBox spacing="4"
+                      style="-fx-background-color: rgba(17,34,51,0.85); -fx-background-radius: 16; -fx-padding: 16;"
+                      HBox.hgrow="ALWAYS">
+                    <Label text="Total Stock Value" textFill="#88ffffff">
+                        <font>
+                            <Font size="14"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="stockValueLabel" text="0.00" textFill="#00f2ea">
+                        <font>
+                            <Font name="System Bold" size="22"/>
+                        </font>
+                    </Label>
                 </VBox>
-
             </HBox>
 
-            <BorderPane>
+            <!-- Actions row -->
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button text="Manage Products"
+                        onAction="#onManageProducts"
+                        style="-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);
+                               -fx-background-radius: 12;
+                               -fx-font-size: 14;
+                               -fx-font-weight:bold;
+                               -fx-text-fill:white;"
+                        prefHeight="40"
+                        prefWidth="180"/>
 
-                <left>
-                    <VBox spacing="20" style="-fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%); -fx-padding: 30; -fx-pref-width: 300;">
+                <Button text="View Customers"
+                        onAction="#onViewCustomers"
+                        style="-fx-background-color: transparent;
+                               -fx-border-color:#00f2ea;
+                               -fx-border-radius:12;
+                               -fx-border-width:2;
+                               -fx-text-fill:#00f2ea;
+                               -fx-font-weight:bold;"
+                        prefHeight="40"
+                        prefWidth="160"/>
+            </HBox>
 
-                        <Label style="-fx-text-fill:white; -fx-font-size:22px; -fx-font-weight:bold;" text="Value of Stock" />
-
-                        <Label fx:id="stockValueLabel" style="-fx-text-fill:white; -fx-font-size:30px; -fx-font-weight:bold;" text="" />
-
-                        <VBox spacing="10" style="-fx-padding:20 0 0 0;">
-                            <Label style="-fx-text-fill:#B5C7E3; -fx-font-size:16px;" text="Stock Purchases" />
-
-                            <Label style="-fx-text-fill:white; -fx-font-size:14px;" text="Unfulfilled:" />
-                            <Label fx:id="unfulfilledLabel" style="-fx-text-fill:#E9B000; -fx-font-size:20px;" text="0" />
-
-                            <Label style="-fx-text-fill:white; -fx-font-size:14px; -fx-padding:20 0 0 0;" text="Received:" />
-                            <Label fx:id="receivedLabel" style="-fx-text-fill:#4CAF50; -fx-font-size:20px;" text="0" />
-                        </VBox>
-
-                    </VBox>
-                </left>
+            <!-- Chart area -->
+            <BorderPane style="-fx-background-color: rgba(17,34,51,0.85); -fx-background-radius: 16; -fx-padding: 16;"
+                        VBox.vgrow="ALWAYS">
+                <top>
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Stock by Product (Top 10)" textFill="white">
+                            <font>
+                                <Font size="18"/>
+                            </font>
+                        </Label>
+                    </HBox>
+                </top>
 
                 <center>
-                    <VBox spacing="10" style="-fx-padding:20; -fx-background-color:white;">
-
-                        <Label style="-fx-font-size:24px; -fx-font-weight:bold; -fx-padding:10; -fx-text-fill:#081822;" text="Warehouse Stock" />
-
-                        <BarChart fx:id="stockChart" prefHeight="450" prefWidth="650">
-                            <xAxis>
-                                <CategoryAxis fx:id="stockChartXAxis" label="Product" />
-                            </xAxis>
-                            <yAxis>
-                                <NumberAxis fx:id="stockChartYAxis" label="Quantity" />
-                            </yAxis>
-                        </BarChart>
-
-                    </VBox>
+                    <BarChart fx:id="stockChart"
+                              animated="true"
+                              legendVisible="false"
+                              style="-fx-padding:10;">
+                        <xAxis>
+                            <CategoryAxis label="Product"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Stock"/>
+                        </yAxis>
+                    </BarChart>
                 </center>
-
-                <right>
-                    <VBox spacing="10" style="-fx-padding:20; -fx-background-color:rgba(8,24,34,0.8); -fx-pref-width:220;">
-                        <Label text="Navigation"
-                               style="-fx-text-fill:white; -fx-font-size:18px; -fx-font-weight:bold;"/>
-
-                        <Button text="Manage Products"
-                                onAction="#goToProducts"
-                                style="-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);
-                                       -fx-background-radius: 12;
-                                       -fx-text-fill:white;
-                                       -fx-font-weight:bold;"
-                                maxWidth="Infinity"/>
-
-                        <Button text="Suppliers"
-                                onAction="#goToSuppliers"
-                                style="-fx-background-color:#223344;
-                                       -fx-background-radius: 12;
-                                       -fx-text-fill:white;
-                                       -fx-font-weight:bold;"
-                                maxWidth="Infinity"/>
-
-                        <Button text="Stock Orders"
-                                onAction="#goToOrders"
-                                style="-fx-background-color:#223344;
-                                       -fx-background-radius: 12;
-                                       -fx-text-fill:white;
-                                       -fx-font-weight:bold;"
-                                maxWidth="Infinity"/>
-                    </VBox>
-                </right>
-
             </BorderPane>
+
         </VBox>
     </center>
 

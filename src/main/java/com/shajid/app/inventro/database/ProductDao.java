@@ -1,4 +1,3 @@
-// src/main/java/com/shajid/app/inventro/database/ProductDao.java
 package com.shajid.app.inventro.database;
 
 import com.shajid.app.inventro.model.Product;
@@ -20,23 +19,22 @@ public final class ProductDao {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                out.add(new Product(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("category"),
-                        rs.getInt("stock"),
-                        rs.getDouble("price")
-                ));
+                Product p = new Product();
+                p.setId(rs.getInt("id"));
+                p.setName(rs.getString("name"));
+                p.setCategory(rs.getString("category"));
+                p.setStock(rs.getInt("stock"));
+                p.setPrice(rs.getDouble("price"));
+                out.add(p);
             }
         }
         return out;
     }
 
     public static void insert(Product p) throws SQLException {
-        String sql = "INSERT INTO products(name, category, stock, price) VALUES(?, ?, ?, ?)";
+        String sql = "INSERT INTO products(name, category, stock, price) VALUES(?,?,?,?)";
         try (Connection conn = SQLiteConnection.connect();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setString(1, p.getName());
             ps.setString(2, p.getCategory());
             ps.setInt(3, p.getStock());
@@ -45,29 +43,28 @@ public final class ProductDao {
         }
     }
 
-    public static void insertAll(List<Product> products) throws SQLException {
-        String sql = "INSERT INTO products(name, category, stock, price) VALUES(?, ?, ?, ?)";
-
+    public static void update(Product p) throws SQLException {
+        if (p.getId() == null) {
+            throw new IllegalArgumentException("Product id required for update");
+        }
+        String sql = "UPDATE products SET name=?, category=?, stock=?, price=? WHERE id=?";
         try (Connection conn = SQLiteConnection.connect();
              PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, p.getName());
+            ps.setString(2, p.getCategory());
+            ps.setInt(3, p.getStock());
+            ps.setDouble(4, p.getPrice());
+            ps.setInt(5, p.getId());
+            ps.executeUpdate();
+        }
+    }
 
-            conn.setAutoCommit(false);
-            try {
-                for (Product p : products) {
-                    ps.setString(1, p.getName());
-                    ps.setString(2, p.getCategory());
-                    ps.setInt(3, p.getStock());
-                    ps.setDouble(4, p.getPrice());
-                    ps.addBatch();
-                }
-                ps.executeBatch();
-                conn.commit();
-            } catch (Exception e) {
-                conn.rollback();
-                throw e;
-            } finally {
-                conn.setAutoCommit(true);
-            }
+    public static void deleteById(int id) throws SQLException {
+        String sql = "DELETE FROM products WHERE id=?";
+        try (Connection conn = SQLiteConnection.connect();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
         }
     }
 }

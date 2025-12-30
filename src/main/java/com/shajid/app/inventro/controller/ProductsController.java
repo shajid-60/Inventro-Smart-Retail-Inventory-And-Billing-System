@@ -1,252 +1,276 @@
-// src/main/java/com/shajid/app/inventro/controller/ProductsController.java
 package com.shajid.app.inventro.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shajid.app.inventro.database.ProductDao;
 import com.shajid.app.inventro.model.Product;
+import javafx.application.Platform;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.Window;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.function.Predicate;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ProductsController {
 
-    @FXML private TextField searchField;
+    // --- Table row wrapper for JavaFX binding ---
+    public static class ProductRow {
+        private final IntegerProperty id = new SimpleIntegerProperty();
+        private final StringProperty name = new SimpleStringProperty();
+        private final StringProperty category = new SimpleStringProperty();
+        private final IntegerProperty stock = new SimpleIntegerProperty();
+        private final DoubleProperty price = new SimpleDoubleProperty();
 
-    @FXML private TableView<Product> productsTable;
-    @FXML private TableColumn<Product, Integer> colId;
-    @FXML private TableColumn<Product, String> colName;
-    @FXML private TableColumn<Product, String> colCategory;
-    @FXML private TableColumn<Product, Integer> colStock;
-    @FXML private TableColumn<Product, Double> colPrice;
+        public ProductRow() {}
 
-    @FXML private TextField addNameField;
-    @FXML private TextField addCategoryField;
-    @FXML private TextField addStockField;
-    @FXML private TextField addPriceField;
+        public ProductRow(Product p) {
+            setId(p.getId());
+            setName(p.getName());
+            setCategory(p.getCategory());
+            setStock(p.getStock());
+            setPrice(p.getPrice());
+        }
 
-    private final ObservableList<Product> productsList = FXCollections.observableArrayList();
-    private FilteredList<Product> filteredList;
+        public Integer getId() { return id.get(); }
+        public void setId(Integer v) { id.set(v == null ? 0 : v); }
+        public IntegerProperty idProperty() { return id; }
+
+        public String getName() { return name.get(); }
+        public void setName(String v) { name.set(v); }
+        public StringProperty nameProperty() { return name; }
+
+        public String getCategory() { return category.get(); }
+        public void setCategory(String v) { category.set(v); }
+        public StringProperty categoryProperty() { return category; }
+
+        public int getStock() { return stock.get(); }
+        public void setStock(int v) { stock.set(v); }
+        public IntegerProperty stockProperty() { return stock; }
+
+        public double getPrice() { return price.get(); }
+        public void setPrice(double v) { price.set(v); }
+        public DoubleProperty priceProperty() { return price; }
+
+        public Product toProduct() {
+            Product p = new Product();
+            p.setId(getId());
+            p.setName(getName());
+            p.setCategory(getCategory());
+            p.setStock(getStock());
+            p.setPrice(getPrice());
+            return p;
+        }
+    }
+
+    // --- FXML fields ---
+
+    @FXML private TextField nameField;
+    @FXML private TextField categoryField;
+    @FXML private TextField stockField;
+    @FXML private TextField priceField;
+
+    @FXML private TableView<ProductRow> productsTable;
+    @FXML private TableColumn<ProductRow, Integer> colId;
+    @FXML private TableColumn<ProductRow, String> colName;
+    @FXML private TableColumn<ProductRow, String> colCategory;
+    @FXML private TableColumn<ProductRow, Integer> colStock;
+    @FXML private TableColumn<ProductRow, Double> colPrice;
+
+    private final ObservableList<ProductRow> products = FXCollections.observableArrayList();
+    private final ObjectMapper mapper = new ObjectMapper();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @FXML
     public void initialize() {
-        if (colId != null) colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        if (colName != null) colName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        if (colCategory != null) colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
-        if (colStock != null) colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        if (colPrice != null) colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+        if (colId != null)      colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        if (colName != null)    colName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        if (colCategory != null)colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
+        if (colStock != null)   colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        if (colPrice != null)   colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-        filteredList = new FilteredList<>(productsList, p -> true);
-        if (productsTable != null) productsTable.setItems(filteredList);
-
-        if (searchField != null) {
-            searchField.textProperty().addListener((obs, ov, nv) -> applyFilters());
+        if (productsTable != null) {
+            productsTable.setItems(products);
         }
 
-        reloadFromDb();
+        reloadFromDbAsync();
+    }
+
+    private void reloadFromDbAsync() {
+        executor.submit(() -> {
+            try {
+                List<Product> list = ProductDao.findAll();
+                Platform.runLater(() -> products.setAll(list.stream().map(ProductRow::new).toList()));
+            } catch (Exception e) {
+                e.printStackTrace();
+                Platform.runLater(() -> showError("Load failed", "Could not load products from database."));
+            }
+        });
     }
 
     private void reloadFromDb() {
-        try {
-            productsList.setAll(ProductDao.findAll());
-            applyFilters();
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Load failed", "Could not load products from database.");
-        }
+        reloadFromDbAsync();
     }
 
-    private void applyFilters() {
-        String q = (searchField == null || searchField.getText() == null)
-                ? ""
-                : searchField.getText().trim().toLowerCase(Locale.ROOT);
-
-        if (filteredList != null) filteredList.setPredicate(createPredicate(q));
-    }
-
-    private Predicate<Product> createPredicate(String query) {
-        final String q = query == null ? "" : query;
-
-        return p -> {
-            if (p == null) return false;
-            if (q.isEmpty()) return true;
-
-            if (p.getId() != null && String.valueOf(p.getId()).contains(q)) return true;
-            if (p.getName() != null && p.getName().toLowerCase(Locale.ROOT).contains(q)) return true;
-            if (p.getCategory() != null && p.getCategory().toLowerCase(Locale.ROOT).contains(q)) return true;
-            if (String.valueOf(p.getStock()).contains(q)) return true;
-            if (String.valueOf(p.getPrice()).contains(q)) return true;
-
-            return false;
-        };
-    }
-
+    // --- Add product from text fields ---
     @FXML
     private void onAddProduct(ActionEvent event) {
         try {
-            String name = valueOrEmpty(addNameField);
-            String category = valueOrEmpty(addCategoryField);
-            String stockRaw = valueOrEmpty(addStockField);
-            String priceRaw = valueOrEmpty(addPriceField);
+            String name = valueOrEmpty(nameField);
+            String category = valueOrEmpty(categoryField);
+            String stockText = valueOrEmpty(stockField);
+            String priceText = valueOrEmpty(priceField);
 
-            if (name.isBlank() || stockRaw.isBlank() || priceRaw.isBlank()) {
+            if (name.isBlank() || stockText.isBlank() || priceText.isBlank()) {
                 showError("Invalid input", "Name, stock, and price are required.");
                 return;
             }
 
-            int stock = Integer.parseInt(stockRaw);
-            if (stock < 0) {
-                showError("Invalid input", "Stock must be non\\-negative.");
+            int stock = Integer.parseInt(stockText);
+            double price = Double.parseDouble(priceText);
+
+            if (stock < 0 || price < 0) {
+                showError("Invalid input", "Stock and price must be non-negative.");
                 return;
             }
 
-            double price = new BigDecimal(priceRaw).doubleValue();
-            if (price < 0) {
-                showError("Invalid input", "Price must be non\\-negative.");
-                return;
-            }
+            Product p = new Product(null, name, category, stock, price);
 
-            ProductDao.insert(new Product(null, name, category, stock, price));
-
-            if (addNameField != null) addNameField.clear();
-            if (addCategoryField != null) addCategoryField.clear();
-            if (addStockField != null) addStockField.clear();
-            if (addPriceField != null) addPriceField.clear();
-
-            reloadFromDb();
+            executor.submit(() -> {
+                try {
+                    ProductDao.insert(p);
+                    Platform.runLater(() -> {
+                        if (nameField != null) nameField.clear();
+                        if (categoryField != null) categoryField.clear();
+                        if (stockField != null) stockField.clear();
+                        if (priceField != null) priceField.clear();
+                    });
+                    reloadFromDbAsync();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    Platform.runLater(() -> showError("Error", "Could not add product."));
+                }
+            });
 
         } catch (NumberFormatException ex) {
-            showError("Invalid input", "Stock must be an integer and price must be a number.");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            showError("Error", ex.getMessage() == null ? "Unknown error." : ex.getMessage());
+            showError("Invalid input", "Stock must be integer and price must be a number.");
         }
     }
 
+    // --- Delete selected product ---
     @FXML
-    private void onSaveProducts(ActionEvent event) {
-        // Minimal: products are saved when added/imported.
-        // If you later enable in-table editing, this button can persist edits.
-        reloadFromDb();
-    }
-
-    @FXML
-    private void onImportFromPdf(ActionEvent event) {
-        Window owner = event != null && event.getSource() instanceof Node n ? n.getScene().getWindow() : null;
-        File pdfFile = choosePdfFile(owner);
-        if (pdfFile == null) return;
-
-        try {
-            if (!Files.isRegularFile(pdfFile.toPath())) {
-                showError("Invalid file", "Selected file is not valid.");
-                return;
-            }
-
-            String text = extractTextFromPdf(pdfFile);
-            List<Product> parsed = parseProductsFromPdfText(text);
-
-            if (parsed.isEmpty()) {
-                showError("Nothing imported", "No products found.\\nExpected format per line:\\nname \\| category \\| stock \\| price");
-                return;
-            }
-
-            ProductDao.insertAll(parsed);
-            reloadFromDb();
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            showError("Import failed", ex.getMessage() == null ? "Unknown error." : ex.getMessage());
+    private void onDeleteProduct(ActionEvent event) {
+        ProductRow selected = productsTable == null ? null : productsTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showError("No selection", "Select a product to delete.");
+            return;
         }
+
+        int id = selected.getId();
+        executor.submit(() -> {
+            try {
+                ProductDao.deleteById(id);
+                reloadFromDbAsync();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                Platform.runLater(() -> showError("Delete failed", "Could not delete selected product."));
+            }
+        });
     }
 
+    // --- Export products as JSON ---
+    @FXML
+    private void onExportJson(ActionEvent event) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Export Products to JSON");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files", "*.json"));
+        File file = chooser.showSaveDialog(((Node) event.getSource()).getScene().getWindow());
+        if (file == null) return;
+
+        executor.submit(() -> {
+            try {
+                List<Product> list = products.stream().map(ProductRow::toProduct).toList();
+                mapper.writerWithDefaultPrettyPrinter().writeValue(file, list);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                Platform.runLater(() -> showError("Export failed", "Could not export products to JSON."));
+            }
+        });
+    }
+
+    // --- Import products from JSON ---
+    @FXML
+    private void onImportJson(ActionEvent event) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Import Products from JSON");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files", "*.json"));
+        File file = chooser.showOpenDialog(((Node) event.getSource()).getScene().getWindow());
+        if (file == null) return;
+
+        executor.submit(() -> {
+            try {
+                if (!Files.isRegularFile(file.toPath())) {
+                    Platform.runLater(() -> showError("Invalid file", "Selected file is not valid."));
+                    return;
+                }
+
+                List<Product> imported = mapper.readValue(file, new TypeReference<List<Product>>() {});
+                for (Product p : imported) {
+                    p.setId(null);
+                    ProductDao.insert(p);
+                }
+                reloadFromDbAsync();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                Platform.runLater(() -> showError("Import failed", "Could not import products from JSON."));
+            }
+        });
+    }
+
+    // --- Optional: import from PDF (simple line\-based format) ---
+    @FXML
+    public void onImportFromPdf(ActionEvent event) {
+        showError("Not implemented", "PDF import for products is not implemented.\nUse JSON import instead.");
+        // If you want full PDF parsing like orders, you can copy the PDFBox logic
+        // from OrdersController and define a format such as:
+        // name \| category \| stock \| price per line.
+    }
+
+    // --- Navigation ---
     @FXML
     private void goToDashboard(ActionEvent event) {
-        switchScene(event, "/fxml/dashboard.fxml", "Inventro \\- Admin Dashboard");
+        switchScene(event, "/fxml/dashboard.fxml", "Inventro - Admin Dashboard");
     }
 
-    private void switchScene(ActionEvent event, String fxmlPath, String title) {
+    private void switchScene(ActionEvent event, String fxml, String title) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
+            Parent root = FXMLLoader.load(getClass().getResource(fxml));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 1200, 800));
             stage.setTitle(title);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            showError("Navigation error", "Failed to load: " + fxml + "\n\n" + (e.getMessage() == null ? e.getClass().getName() : e.getMessage()));
         }
     }
 
-    private File choosePdfFile(Window owner) {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Import Products from PDF");
-        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF files", "*.pdf"));
-        return chooser.showOpenDialog(owner);
-    }
-
-    private String extractTextFromPdf(File pdfFile) throws Exception {
-        try (PDDocument doc = PDDocument.load(pdfFile)) {
-            PDFTextStripper stripper = new PDFTextStripper();
-            return stripper.getText(doc);
-        }
-    }
-
-    private List<Product> parseProductsFromPdfText(String text) {
-        List<Product> result = new ArrayList<>();
-        if (text == null || text.isBlank()) return result;
-
-        String[] lines = text.split("\\R");
-        for (String rawLine : lines) {
-            String line = rawLine.trim();
-            if (line.isEmpty()) continue;
-
-            String[] parts = line.split("\\s*\\|\\s*");
-            if (parts.length != 4) continue;
-
-            String name = parts[0].trim();
-            String category = parts[1].trim();
-            Integer stock = tryParseInt(parts[2].trim());
-            Double price = tryParseDouble(parts[3].trim());
-
-            if (name.isEmpty() || stock == null || price == null) continue;
-
-            result.add(new Product(null, name, category, stock, price));
-        }
-
-        return result;
-    }
-
-    private static Integer tryParseInt(String s) {
-        try { return Integer.parseInt(s); } catch (Exception e) { return null; }
-    }
-
-    private static Double tryParseDouble(String s) {
-        try { return Double.parseDouble(s); } catch (Exception e) { return null; }
-    }
-
+    // --- Helpers ---
     private static String valueOrEmpty(TextField tf) {
-        return tf == null ? "" : (tf.getText() == null ? "" : tf.getText().trim());
+        return tf == null || tf.getText() == null ? "" : tf.getText().trim();
     }
 
     private void showError(String title, String content) {

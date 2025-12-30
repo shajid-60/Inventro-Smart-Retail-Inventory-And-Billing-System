@@ -1,7 +1,7 @@
-// src/main/java/com/shajid/app/inventro/controller/DashboardController.java
 package com.shajid.app.inventro.controller;
 
 import com.shajid.app.inventro.database.SQLiteConnection;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,8 +9,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
@@ -19,112 +19,111 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DashboardController {
-
-    @FXML private Label inventroLabel;
 
     @FXML private Label totalProductsLabel;
     @FXML private Label lowStockLabel;
     @FXML private Label outOfStockLabel;
-    @FXML private Label suppliersLabel;
-
     @FXML private Label stockValueLabel;
-    @FXML private Label unfulfilledLabel;
-    @FXML private Label receivedLabel;
-
     @FXML private BarChart<String, Number> stockChart;
-    @FXML private CategoryAxis stockChartXAxis;
-    @FXML private NumberAxis stockChartYAxis;
+
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @FXML
     public void initialize() {
-        refreshStats();
+        reloadAsync();
     }
 
-    private void refreshStats() {
-        setSafe(totalProductsLabel, "0");
-        setSafe(lowStockLabel, "0");
-        setSafe(outOfStockLabel, "0");
-        setSafe(suppliersLabel, "0");
-        setSafe(stockValueLabel, "$0.00");
-        setSafe(unfulfilledLabel, "0");
-        setSafe(receivedLabel, "0");
+    private void reloadAsync() {
+        executor.submit(() -> {
+            try (Connection conn = SQLiteConnection.connect()) {
 
-        try (Connection conn = SQLiteConnection.connect()) {
+                int totalProducts = countInt(conn, "SELECT COUNT(*) FROM products");
+                int lowStock = countInt(conn, "SELECT COUNT(*) FROM products WHERE stock BETWEEN 1 AND 5");
+                int outOfStock = countInt(conn, "SELECT COUNT(*) FROM products WHERE stock <= 0");
 
-            int totalProducts = queryInt(conn, "SELECT COUNT(*) FROM products");
-            int lowStock = queryInt(conn, "SELECT COUNT(*) FROM products WHERE stock > 0 AND stock <= 5");
-            int outOfStock = queryInt(conn, "SELECT COUNT(*) FROM products WHERE stock = 0");
+                double stockValue = sumDouble(conn, "SELECT SUM(stock * price) FROM products");
 
-            double stockValue = queryDouble(conn, "SELECT COALESCE(SUM(stock * price), 0) FROM products");
+                XYChart.Series<String, Number> series = new XYChart.Series<>();
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "SELECT name, stock FROM products ORDER BY id DESC LIMIT 10");
+                     ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        series.getData().add(
+                                new XYChart.Data<>(rs.getString("name"), rs.getInt("stock")));
+                    }
+                }
 
-            int unfulfilled = queryInt(conn, "SELECT COUNT(*) FROM orders WHERE LOWER(status) = 'unfulfilled'");
-            int received = queryInt(conn, "SELECT COUNT(*) FROM orders WHERE LOWER(status) = 'received'");
+                Platform.runLater(() -> {
+                    NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.US);
 
-            setSafe(totalProductsLabel, String.valueOf(totalProducts));
-            setSafe(lowStockLabel, String.valueOf(lowStock));
-            setSafe(outOfStockLabel, String.valueOf(outOfStock));
+                    if (totalProductsLabel != null) totalProductsLabel.setText(String.valueOf(totalProducts));
+                    if (lowStockLabel != null)     lowStockLabel.setText(String.valueOf(lowStock));
+                    if (outOfStockLabel != null)   outOfStockLabel.setText(String.valueOf(outOfStock));
 
-            // No suppliers table in your DB setup yet, keep 0 for now.
-            setSafe(suppliersLabel, "0");
+                    if (stockValueLabel != null)   stockValueLabel.setText(nf.format(stockValue));
 
-            setSafe(stockValueLabel, formatCurrency(stockValue));
-            setSafe(unfulfilledLabel, String.valueOf(unfulfilled));
-            setSafe(receivedLabel, String.valueOf(received));
+                    if (stockChart != null) {
+                        stockChart.getData().clear();
+                        stockChart.getData().add(series);
+                    }
+                });
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Platform.runLater(() ->
+                        showError("Dashboard error", "Failed to load dashboard data."));
+            }
+        });
     }
 
-    private static int queryInt(Connection conn, String sql) throws Exception {
+    private int countInt(Connection conn, String sql) throws Exception {
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             return rs.next() ? rs.getInt(1) : 0;
         }
     }
 
-    private static double queryDouble(Connection conn, String sql) throws Exception {
+    private double sumDouble(Connection conn, String sql) throws Exception {
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             return rs.next() ? rs.getDouble(1) : 0.0;
         }
     }
 
-    private static void setSafe(Label label, String value) {
-        if (label != null) label.setText(value);
-    }
+    // --- Navigation handlers for buttons in `dashboard.fxml` ---
 
-    private static String formatCurrency(double v) {
-        NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.US);
-        return nf.format(v);
+    @FXML
+    private void onManageProducts(ActionEvent event) {
+        switchScene(event, "/fxml/products.fxml", "Inventro - Manage Products");
     }
 
     @FXML
-    private void goToProducts(ActionEvent event) {
-        switchScene(event, "/fxml/products.fxml", "Inventro \\- Products");
+    private void onViewCustomers(ActionEvent event) {
+        switchScene(event, "/fxml/customers.fxml", "Inventro - Customers");
     }
 
-    @FXML
-    private void goToSuppliers(ActionEvent event) {
-        switchScene(event, "/fxml/suppliers.fxml", "Inventro \\- Suppliers");
-    }
-
-    @FXML
-    private void goToOrders(ActionEvent event) {
-        switchScene(event, "/fxml/orders.fxml", "Inventro \\- Stock Orders");
-    }
-
-    private void switchScene(ActionEvent event, String fxmlPath, String title) {
+    private void switchScene(ActionEvent event, String fxml, String title) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
+            Parent root = FXMLLoader.load(getClass().getResource(fxml));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 1200, 800));
             stage.setTitle(title);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            showError("Navigation error", "Failed to load: " + fxml);
         }
+    }
+
+    private void showError(String title, String msg) {
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
     }
 }
