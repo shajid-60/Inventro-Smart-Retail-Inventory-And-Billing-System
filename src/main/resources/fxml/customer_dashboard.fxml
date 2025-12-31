@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
@@ -15,19 +16,19 @@
                 <font><Font name="System Bold" size="26"/></font>
             </Label>
             <Region HBox.hgrow="ALWAYS"/>
-            <Label text="Shop Products" textFill="white">
+            <Label text="Customer Dashboard" textFill="white">
                 <font><Font size="20"/></font>
             </Label>
         </HBox>
     </top>
 
     <center>
-        <VBox spacing="14"
+        <VBox spacing="18"
               style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
 
             <HBox spacing="10" alignment="CENTER_RIGHT">
-                <Button text="Go to Billing"
-                        onAction="#onGoToBilling"
+                <Button text="Logout"
+                        onAction="#onLogout"
                         style="-fx-background-color: transparent;
                                -fx-border-color:#00f2ea;
                                -fx-border-radius:12;
@@ -47,9 +48,32 @@
                     <TableColumn fx:id="colName" text="Name" prefWidth="240"/>
                     <TableColumn fx:id="colCategory" text="Category" prefWidth="200"/>
                     <TableColumn fx:id="colStock" text="Stock" prefWidth="120"/>
-                    <TableColumn fx:id="colPrice" text="Price" prefWidth="120"/>
+                    <TableColumn fx:id="colSoldPrice" text="Price" prefWidth="120"/>
+                    <!-- add\-to\-cart button column -->
+                    <TableColumn fx:id="colAction" text="Action" prefWidth="140"/>
                 </columns>
             </TableView>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Label text="Cart Total:" textFill="white">
+                    <font><Font size="16"/></font>
+                </Label>
+                <Label fx:id="cartTotalLabel"
+                       text="0.00"
+                       textFill="#00f2ea">
+                    <font><Font name="System Bold" size="18"/></font>
+                </Label>
+
+                <Button text="Go to Billing"
+                        onAction="#onGoToBilling"
+                        style="-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);
+                               -fx-background-radius: 12;
+                               -fx-font-size: 14;
+                               -fx-font-weight:bold;
+                               -fx-text-fill:white;"
+                        prefHeight="40"
+                        prefWidth="160"/>
+            </HBox>
 
         </VBox>
     </center>

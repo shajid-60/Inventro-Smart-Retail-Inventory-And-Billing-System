@@ -212,6 +212,7 @@ public class ProductsController {
     }
 
     // --- Import products from JSON ---
+// Java
     @FXML
     private void onImportJson(ActionEvent event) {
         FileChooser chooser = new FileChooser();
@@ -227,15 +228,38 @@ public class ProductsController {
                     return;
                 }
 
+                // Read JSON
                 List<Product> imported = mapper.readValue(file, new TypeReference<List<Product>>() {});
+
+                // Basic validation + reset IDs
                 for (Product p : imported) {
-                    p.setId(null);
+                    if (p.getName() == null || p.getName().isBlank()) {
+                        Platform.runLater(() -> showError("Import failed",
+                                "Found product with empty name in JSON."));
+                        return;
+                    }
+                    if (p.getStock() < 0 || p.getPrice() < 0) {
+                        Platform.runLater(() -> showError("Import failed",
+                                "Stock and price must be non-negative."));
+                        return;
+                    }
+                    p.setId(null); // let DB assign ID
+                }
+
+                // Insert all
+                for (Product p : imported) {
                     ProductDao.insert(p);
                 }
+
+                // Reload table
                 reloadFromDbAsync();
             } catch (Exception ex) {
                 ex.printStackTrace();
-                Platform.runLater(() -> showError("Import failed", "Could not import products from JSON."));
+                Platform.runLater(() -> showError(
+                        "Import failed",
+                        "Could not import products from JSON.\n" +
+                                "Make sure JSON is an array of objects with fields: id, name, category, stock, price."
+                ));
             }
         });
     }

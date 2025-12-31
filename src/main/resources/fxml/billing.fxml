@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
@@ -10,7 +11,7 @@
 
     <top>
         <HBox spacing="10"
-              style="-fx-padding:20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
+              style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
             <Label text="Inventro" textFill="#00f2ea">
                 <font><Font name="System Bold" size="26"/></font>
             </Label>
@@ -22,15 +23,93 @@
     </top>
 
     <center>
-        <VBox spacing="14"
-              alignment="CENTER"
-              style="-fx-padding:20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
-            <Label text="Billing Page" textFill="white">
-                <font><Font size="22"/></font>
-            </Label>
-            <Button text="Back to Shopping"
-                    onAction="#onBackToCustomer"
-                    style="-fx-background-color: transparent; -fx-border-color:#00f2ea; -fx-border-radius:12; -fx-border-width:2; -fx-text-fill:#00f2ea; -fx-font-weight:bold;"/>
+        <VBox spacing="18"
+              style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
+
+            <!-- Top actions -->
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button text="Back to Customer Dashboard"
+                        onAction="#onBackToCustomerDashboard"
+                        style="-fx-background-color: transparent;
+                               -fx-border-color:#00f2ea;
+                               -fx-border-radius:12;
+                               -fx-border-width:2;
+                               -fx-text-fill:#00f2ea;
+                               -fx-font-weight:bold;"/>
+            </HBox>
+
+            <!-- Cart table -->
+            <TableView fx:id="cartTable"
+                       VBox.vgrow="ALWAYS"
+                       style="-fx-background-color:#FFFFFF; -fx-background-radius:8; -fx-border-radius:8;">
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+                <columns>
+                    <!-- Match BillingController.ProductRow properties: name, category, soldPrice, stock, lineTotal, etc. -->
+                    <TableColumn fx:id="colName" text="Product" prefWidth="220"/>
+                    <TableColumn fx:id="colCategory" text="Category" prefWidth="160"/>
+                    <TableColumn fx:id="colPrice" text="Price" prefWidth="120"/>
+                    <TableColumn fx:id="colStock" text="Quantity" prefWidth="120"/>
+                    <TableColumn fx:id="colTotal" text="Line Total" prefWidth="140"/>
+                </columns>
+            </TableView>
+
+            <!-- Totals section -->
+            <HBox spacing="18" alignment="CENTER_RIGHT">
+                <VBox spacing="6"
+                      style="-fx-background-color: rgba(17,34,51,0.85);
+                             -fx-background-radius: 16;
+                             -fx-padding: 16;"
+                      prefWidth="320">
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label text="Subtotal:" textFill="#88ffffff">
+                            <font><Font size="14"/></font>
+                        </Label>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="subtotalLabel" text="0.00" textFill="#00f2ea">
+                            <font><Font name="System Bold" size="16"/></font>
+                        </Label>
+                    </HBox>
+
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label text="Discount:" textFill="#88ffffff">
+                            <font><Font size="14"/></font>
+                        </Label>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="discountLabel" text="0.00" textFill="#FFC300">
+                            <font><Font name="System Bold" size="16"/></font>
+                        </Label>
+                    </HBox>
+
+                    <Separator/>
+
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label text="Grand Total:" textFill="#ffffff">
+                            <font><Font size="16"/></font>
+                        </Label>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="grandTotalLabel" text="0.00" textFill="#00f2ea">
+                            <font><Font name="System Bold" size="20"/></font>
+                        </Label>
+                    </HBox>
+                </VBox>
+            </HBox>
+
+            <!-- Confirm button -->
+            <HBox alignment="CENTER_RIGHT">
+                <Button fx:id="confirmButton"
+                        text="Confirm Payment"
+                        onAction="#onConfirmAndSaveBill"
+                        prefHeight="44"
+                        prefWidth="220"
+                        style="-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);
+                               -fx-background-radius: 12;
+                               -fx-font-size: 16;
+                               -fx-font-weight:bold;
+                               -fx-text-fill:white;"/>
+            </HBox>
+
         </VBox>
     </center>
 

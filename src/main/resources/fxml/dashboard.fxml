@@ -50,7 +50,7 @@
                 <VBox spacing="4"
                       style="-fx-background-color: rgba(17,34,51,0.85); -fx-background-radius: 16; -fx-padding: 16;"
                       HBox.hgrow="ALWAYS">
-                    <Label text="Low Stock (1\-5)" textFill="#88ffffff">
+                    <Label text="Low Stock (1-5)" textFill="#88ffffff">
                         <font>
                             <Font size="14"/>
                         </font>
@@ -91,6 +91,21 @@
                         </font>
                     </Label>
                 </VBox>
+                <VBox spacing="4"
+                      style="-fx-background-color: rgba(17,34,51,0.85); -fx-background-radius: 16; -fx-padding: 16;"
+                      HBox.hgrow="ALWAYS">
+                    <Label text="Total Revenue" textFill="#88ffffff">
+                        <font>
+                            <Font size="14"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="revenueLabel" text="0.00" textFill="#00f2ea">
+                        <font>
+                            <Font name="System Bold" size="22"/>
+                        </font>
+                    </Label>
+                </VBox>
+
             </HBox>
 
             <!-- Actions row -->

@@ -12,12 +12,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,7 +28,8 @@ public class CustomerDashboardController {
         private final StringProperty name = new SimpleStringProperty();
         private final StringProperty category = new SimpleStringProperty();
         private final IntegerProperty stock = new SimpleIntegerProperty();
-        private final DoubleProperty price = new SimpleDoubleProperty();
+        private final DoubleProperty price = new SimpleDoubleProperty();      // base price
+        private final DoubleProperty soldPrice = new SimpleDoubleProperty();  // customer price
 
         public ProductRow(Product p) {
             setId(p.getId());
@@ -37,6 +37,7 @@ public class CustomerDashboardController {
             setCategory(p.getCategory());
             setStock(p.getStock());
             setPrice(p.getPrice());
+            setSoldPrice(p.getSoldPrice() == 0.0 ? p.getPrice() * 1.15 : p.getSoldPrice());
         }
 
         public Integer getId() { return id.get(); }
@@ -58,6 +59,10 @@ public class CustomerDashboardController {
         public double getPrice() { return price.get(); }
         public void setPrice(double v) { price.set(v); }
         public DoubleProperty priceProperty() { return price; }
+
+        public double getSoldPrice() { return soldPrice.get(); }
+        public void setSoldPrice(double v) { soldPrice.set(v); }
+        public DoubleProperty soldPriceProperty() { return soldPrice; }
     }
 
     @FXML private TableView<ProductRow> productsTable;
@@ -65,24 +70,74 @@ public class CustomerDashboardController {
     @FXML private TableColumn<ProductRow, String> colName;
     @FXML private TableColumn<ProductRow, String> colCategory;
     @FXML private TableColumn<ProductRow, Integer> colStock;
-    @FXML private TableColumn<ProductRow, Double> colPrice;
+    @FXML private TableColumn<ProductRow, Double> colSoldPrice;
+    @FXML private TableColumn<ProductRow, Void> colAction;
+
+    @FXML private Label cartTotalLabel;
 
     private final ObservableList<ProductRow> products = FXCollections.observableArrayList();
+    private final List<ProductRow> cart = new ArrayList<>();
+    private double cartTotal = 0.0;
+
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @FXML
     public void initialize() {
-        if (colId != null)      colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        if (colName != null)    colName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        if (colCategory != null)colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
-        if (colStock != null)   colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        if (colPrice != null)   colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+        if (colId != null)          colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        if (colName != null)        colName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        if (colCategory != null)    colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
+        if (colStock != null)       colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        if (colSoldPrice != null)   colSoldPrice.setCellValueFactory(new PropertyValueFactory<>("soldPrice"));
 
         if (productsTable != null) {
             productsTable.setItems(products);
         }
 
+        setupActionColumn();
         reloadProductsAsync();
+        updateCartTotalLabel();
+    }
+
+    private void setupActionColumn() {
+        if (colAction == null) return;
+
+        colAction.setCellFactory(col -> new TableCell<>() {
+            private final Button btn = new Button("Add to cart");
+
+            {
+                btn.setOnAction(e -> {
+                    ProductRow row = getTableView().getItems().get(getIndex());
+                    addToCart(row);
+                });
+                btn.setStyle(
+                        "-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);" +
+                                "-fx-text-fill:white; -fx-background-radius:12; -fx-font-weight:bold;"
+                );
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : btn);
+            }
+        });
+    }
+
+    private void addToCart(ProductRow row) {
+        if (row == null) return;
+        if (row.getStock() <= 0) {
+            showError("Out of stock", "This product is out of stock.");
+            return;
+        }
+        cart.add(row);
+        cartTotal += row.getSoldPrice();
+        updateCartTotalLabel();
+    }
+
+    private void updateCartTotalLabel() {
+        if (cartTotalLabel != null) {
+            cartTotalLabel.setText(String.format("%.2f", cartTotal));
+        }
     }
 
     private void reloadProductsAsync() {
@@ -93,26 +148,44 @@ public class CustomerDashboardController {
                 Platform.runLater(() -> products.setAll(rows));
             } catch (Exception e) {
                 e.printStackTrace();
-                Platform.runLater(() -> showError("Load failed", "Could not load products for customer."));
+                Platform.runLater(() ->
+                        showError("Load failed", "Could not load products for customer."));
             }
         });
     }
 
     @FXML
     private void onGoToBilling(ActionEvent event) {
-        switchScene(event, "/fxml/billing.fxml", "Inventro - Billing");
-    }
-
-    private void switchScene(ActionEvent event, String fxml, String title) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource(fxml));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/billing.fxml"));
+            Parent root = loader.load();
+
+            BillingController billingController = loader.getController();
+            billingController.setCartItems(new ArrayList<>(cart)); // pass copy
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 1200, 800));
-            stage.setTitle(title);
+            stage.setTitle("Inventro - Billing");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
-            showError("Navigation error", "Failed to load: " + fxml);
+            showError("Navigation error", "Failed to open billing page.");
+        }
+    }
+
+    @FXML
+    private void onLogout(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(
+                    getClass().getResource("/fxml/login.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root, 1200, 800));
+            stage.setTitle("Inventro - Login");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Navigation error", "Failed to go back to login.");
         }
     }
 

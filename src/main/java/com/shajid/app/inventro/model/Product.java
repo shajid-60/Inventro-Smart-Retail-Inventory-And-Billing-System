@@ -1,3 +1,4 @@
+// Java
 package com.shajid.app.inventro.model;
 
 public class Product {
@@ -5,7 +6,8 @@ public class Product {
     private String name;
     private String category;
     private int stock;
-    private double price;
+    private double price;      // base cost
+    private double soldPrice;  // customer price (15% markup)
 
     public Product() {}
 
@@ -15,6 +17,7 @@ public class Product {
         this.category = category;
         this.stock = stock;
         this.price = price;
+        this.soldPrice = price * 1.15;
     }
 
     public Integer getId() { return id; }
@@ -30,5 +33,13 @@ public class Product {
     public void setStock(int stock) { this.stock = stock; }
 
     public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
+    public void setPrice(double price) {
+        this.price = price;
+        if (soldPrice == 0) {
+            this.soldPrice = price * 1.15;
+        }
+    }
+
+    public double getSoldPrice() { return soldPrice; }
+    public void setSoldPrice(double soldPrice) { this.soldPrice = soldPrice; }
 }

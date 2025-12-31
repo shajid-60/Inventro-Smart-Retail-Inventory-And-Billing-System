@@ -6,7 +6,9 @@ module com.shajid.app.inventro {
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
 
-    opens com.shajid.app.inventro.controller to javafx.fxml;
+    opens com.shajid.app.inventro.controller to javafx.fxml, javafx.base;
+    opens com.shajid.app.inventro.model to javafx.base;
+
     exports com.shajid.app.inventro;
     exports com.shajid.app.inventro.model;
 }

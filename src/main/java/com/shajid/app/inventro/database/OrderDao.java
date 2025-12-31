@@ -1,91 +1,56 @@
+// Java
 package com.shajid.app.inventro.database;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import com.shajid.app.inventro.model.Product;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public final class OrderDao {
 
-    public static class OrderRecord {
-        public final int id;
-        public final String supplier;
-        public final String date;
-        public final double total;
-        public final String status;
-        public final double revenue;
+    private OrderDao() { }
 
-        public OrderRecord(int id, String supplier, String date, double total, String status) {
-            this(id, supplier, date, total, status, 0.0);
+    // Save a customer bill as one order
+    // \- `items` are products in the cart with quantity 1 each (you can later extend with quantity)
+    public static void insertCustomerOrder(java.util.List<Product> items) throws SQLException {
+        if (items == null || items.isEmpty()) return;
+
+        double totalSold = 0.0;
+        double totalBase = 0.0;
+
+        for (Product p : items) {
+            totalSold += p.getSoldPrice();
+            totalBase += p.getPrice();
         }
+        double revenue = totalSold - totalBase;
 
-        public OrderRecord(int id, String supplier, String date, double total, String status, double revenue) {
-            this.id = id;
-            this.supplier = supplier;
-            this.date = date;
-            this.total = total;
-            this.status = status;
-            this.revenue = revenue;
+        String sql = "INSERT INTO orders(supplier, date, total, status, revenue) VALUES(?,?,?,?,?)";
+
+        try (Connection conn = SQLiteConnection.connect();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, "Customer");
+            ps.setString(2, java.time.LocalDateTime.now().toString());
+            ps.setDouble(3, totalSold);
+            ps.setString(4, "COMPLETED");
+            ps.setDouble(5, revenue);
+            ps.executeUpdate();
         }
     }
 
-    private OrderDao() {}
-
-    public static List<OrderRecord> findAll() throws SQLException {
-        String sql = "SELECT id, supplier, date, total, status, revenue FROM orders ORDER BY id DESC";
-        List<OrderRecord> out = new ArrayList<>();
+    public static double computeTotalRevenue() throws SQLException {
+        String sql = "SELECT SUM(revenue) AS r FROM orders WHERE status='COMPLETED'";
 
         try (Connection conn = SQLiteConnection.connect();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
-            while (rs.next()) {
-                out.add(new OrderRecord(
-                        rs.getInt("id"),
-                        rs.getString("supplier"),
-                        rs.getString("date"),
-                        rs.getDouble("total"),
-                        rs.getString("status"),
-                        rs.getDouble("revenue")
-                ));
+            if (rs.next()) {
+                return rs.getDouble("r");
             }
-        }
-        return out;
-    }
-
-    public static void insertAll(List<OrderRecord> orders) throws SQLException {
-        String sql = "INSERT INTO orders(supplier, date, total, status, revenue) VALUES(?, ?, ?, ?, ?)";
-
-        try (Connection conn = SQLiteConnection.connect();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            conn.setAutoCommit(false);
-            try {
-                for (OrderRecord o : orders) {
-                    ps.setString(1, o.supplier);
-                    ps.setString(2, o.date);
-                    ps.setDouble(3, o.total);
-                    ps.setString(4, o.status);
-                    ps.setDouble(5, o.revenue);
-                    ps.addBatch();
-                }
-                ps.executeBatch();
-                conn.commit();
-            } catch (Exception e) {
-                conn.rollback();
-                throw e;
-            } finally {
-                conn.setAutoCommit(true);
-            }
-        }
-    }
-
-    public static void updateStatus(int id, String status) throws SQLException {
-        String sql = "UPDATE orders SET status=? WHERE id=?";
-        try (Connection conn = SQLiteConnection.connect();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, status);
-            ps.setInt(2, id);
-            ps.executeUpdate();
+            return 0.0;
         }
     }
 }
