@@ -40,6 +40,7 @@ public class DashboardController {
 
     // --- Load summary labels ---
 // Java
+    @FXML private Label revenueLabel;
     private void loadSummaryAsync() {
         executor.submit(() -> {
             try {
@@ -72,9 +73,12 @@ public class DashboardController {
                     if (stockValueLabel != null) {
                         stockValueLabel.setText(String.format("%.2f", stockValue));
                     }
+
                     if (revenueLabel != null) {
                         revenueLabel.setText(String.format("%.2f", totalRevenue));
                     }
+
+
                 });
             } catch (Exception e) {
                 e.printStackTrace();

@@ -1,3 +1,4 @@
+// Java
 package com.shajid.app.inventro.controller;
 
 import com.shajid.app.inventro.database.ProductDao;
@@ -12,7 +13,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
@@ -63,15 +69,26 @@ public class CustomerDashboardController {
         public double getSoldPrice() { return soldPrice.get(); }
         public void setSoldPrice(double v) { soldPrice.set(v); }
         public DoubleProperty soldPriceProperty() { return soldPrice; }
+
+        public Product toProduct() {
+            Product p = new Product();
+            p.setId(getId());
+            p.setName(getName());
+            p.setCategory(getCategory());
+            p.setStock(getStock());
+            p.setPrice(getPrice());
+            p.setSoldPrice(getSoldPrice());
+            return p;
+        }
     }
 
     @FXML private TableView<ProductRow> productsTable;
     @FXML private TableColumn<ProductRow, Integer> colId;
-    @FXML private TableColumn<ProductRow, String> colName;
-    @FXML private TableColumn<ProductRow, String> colCategory;
+    @FXML private TableColumn<ProductRow, String>  colName;
+    @FXML private TableColumn<ProductRow, String>  colCategory;
     @FXML private TableColumn<ProductRow, Integer> colStock;
-    @FXML private TableColumn<ProductRow, Double> colSoldPrice;
-    @FXML private TableColumn<ProductRow, Void> colAction;
+    @FXML private TableColumn<ProductRow, Double>  colSoldPrice;
+    @FXML private TableColumn<ProductRow, Void>    colAction;
 
     @FXML private Label cartTotalLabel;
 
@@ -83,11 +100,11 @@ public class CustomerDashboardController {
 
     @FXML
     public void initialize() {
-        if (colId != null)          colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        if (colName != null)        colName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        if (colCategory != null)    colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
-        if (colStock != null)       colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        if (colSoldPrice != null)   colSoldPrice.setCellValueFactory(new PropertyValueFactory<>("soldPrice"));
+        if (colId != null)       colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        if (colName != null)     colName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        if (colCategory != null) colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
+        if (colStock != null)    colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        if (colSoldPrice != null)colSoldPrice.setCellValueFactory(new PropertyValueFactory<>("soldPrice"));
 
         if (productsTable != null) {
             productsTable.setItems(products);
@@ -162,7 +179,13 @@ public class CustomerDashboardController {
             Parent root = loader.load();
 
             BillingController billingController = loader.getController();
-            billingController.setCartItems(new ArrayList<>(cart)); // pass copy
+
+            // Convert ProductRow cart items to Product list
+            List<Product> cartProducts = new ArrayList<>();
+            for (ProductRow r : cart) {
+                cartProducts.add(r.toProduct());
+            }
+            billingController.setCartItems(cartProducts);
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 1200, 800));

@@ -46,12 +46,11 @@
                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                 </columnResizePolicy>
                 <columns>
-                    <!-- Match BillingController.ProductRow properties: name, category, soldPrice, stock, lineTotal, etc. -->
-                    <TableColumn fx:id="colName" text="Product" prefWidth="220"/>
-                    <TableColumn fx:id="colCategory" text="Category" prefWidth="160"/>
-                    <TableColumn fx:id="colPrice" text="Price" prefWidth="120"/>
-                    <TableColumn fx:id="colStock" text="Quantity" prefWidth="120"/>
-                    <TableColumn fx:id="colTotal" text="Line Total" prefWidth="140"/>
+                    <TableColumn fx:id="colName"    text="Product"    prefWidth="220"/>
+                    <TableColumn fx:id="colCategory" text="Category"   prefWidth="160"/>
+                    <TableColumn fx:id="colPrice"   text="Price"      prefWidth="120"/>
+                    <TableColumn fx:id="colQuantity"   text="Quantity"   prefWidth="120"/>
+                    <TableColumn fx:id="colTotal"   text="Line Total" prefWidth="140"/>
                 </columns>
             </TableView>
 
@@ -62,6 +61,7 @@
                              -fx-background-radius: 16;
                              -fx-padding: 16;"
                       prefWidth="320">
+
                     <HBox alignment="CENTER_RIGHT">
                         <Label text="Subtotal:" textFill="#88ffffff">
                             <font><Font size="14"/></font>
