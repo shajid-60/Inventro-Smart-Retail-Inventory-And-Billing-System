@@ -1,5 +1,4 @@
 package com.shajid.app.inventro.controller;
-
 import com.shajid.app.inventro.database.SQLiteConnection;
 import javafx.application.Platform;
 import javafx.beans.property.*;
@@ -109,7 +108,7 @@ public class CustomersController {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/dashboard.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 1200, 800));
-            stage.setTitle("Inventro \\- Admin Dashboard");
+            stage.setTitle("Inventro - Admin Dashboard");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();

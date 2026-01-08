@@ -70,7 +70,6 @@
                            wrapText="true" />
                 </VBox>
 
-                <!-- Full Name -->
                 <TextField fx:id="fullNameField"
                            promptText="Enter your full name"
                            style="-fx-background-color:#223344;
@@ -79,7 +78,6 @@
                                   -fx-background-radius:12;
                                   -fx-padding:10;" />
 
-                <!-- Age -->
                 <TextField fx:id="ageField"
                            promptText="Enter your age"
                            style="-fx-background-color:#223344;
@@ -88,7 +86,6 @@
                                   -fx-background-radius:12;
                                   -fx-padding:10;" />
 
-                <!-- Phone -->
                 <TextField fx:id="phoneField"
                            promptText="Enter your phone number"
                            style="-fx-background-color:#223344;
@@ -97,7 +94,6 @@
                                   -fx-background-radius:12;
                                   -fx-padding:10;" />
 
-                <!-- Address -->
                 <TextField fx:id="addressField"
                            promptText="Enter your address"
                            style="-fx-background-color:#223344;
@@ -106,7 +102,6 @@
                                   -fx-background-radius:12;
                                   -fx-padding:10;" />
 
-                <!-- Email -->
                 <TextField fx:id="emailField"
                            promptText="Enter your email"
                            style="-fx-background-color:#223344;
@@ -115,7 +110,6 @@
                                   -fx-background-radius:12;
                                   -fx-padding:10;" />
 
-                <!-- Password -->
                 <PasswordField fx:id="passwordField"
                                promptText="Create a password"
                                style="-fx-background-color:#223344;
@@ -124,7 +118,6 @@
                                       -fx-background-radius:12;
                                       -fx-padding:10;" />
 
-                <!-- Confirm Password -->
                 <PasswordField fx:id="confirmPasswordField"
                                promptText="Confirm your password"
                                style="-fx-background-color:#223344;
@@ -133,12 +126,10 @@
                                       -fx-background-radius:12;
                                       -fx-padding:10;" />
 
-                <!-- Hidden role combo, controller forces \`Customer\` -->
                 <ComboBox fx:id="roleCombo"
                           visible="false"
                           managed="false" />
 
-                <!-- Register Button -->
                 <Button fx:id="registerButton"
                         onAction="#onRegisterClick"
                         prefHeight="44"
@@ -149,13 +140,12 @@
                                -fx-text-fill:white;"
                         text="Register" />
 
-                <!-- Error label -->
                 <Label fx:id="errorLabel"
                        textFill="#ff6666"
                        wrapText="true"
                        style="-fx-font-size: 13;" />
 
-                <!-- Already have account -->
+
                 <HBox alignment="CENTER" spacing="6">
                     <Label text="Already have an account?"
                            textFill="#88ffffff" />
@@ -166,7 +156,6 @@
                 </HBox>
             </VBox>
 
-            <!-- FOOTER -->
             <Label alignment="CENTER"
                    text="© 2025 Inventro Ltd. All rights reserved."
                    textFill="#66ffffff">

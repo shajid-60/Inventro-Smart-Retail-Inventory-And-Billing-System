@@ -1,5 +1,4 @@
 package com.shajid.app.inventro.controller;
-
 import com.shajid.app.inventro.database.SQLiteConnection;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -55,14 +54,13 @@ public class LoginController {
 
         try {
             if ("Admin".equals(role)) {
-                // Hardcoded single admin
                 if (ADMIN_EMAIL.equals(email) && ADMIN_PASSWORD.equals(password)) {
+                    SessionManager.setCurrentUser(0, email, "Admin");
                     loadScene(event, "/fxml/dashboard.fxml", "Inventro - Admin Dashboard");
                 } else {
                     errorLabel.setText("Incorrect admin email or password.");
                 }
             } else {
-                // Customer from DB
                 try (Connection conn = SQLiteConnection.connect()) {
                     String sql = "SELECT * FROM users WHERE email=? AND password=? AND role=?";
                     PreparedStatement stmt = conn.prepareStatement(sql);
@@ -73,6 +71,8 @@ public class LoginController {
                     ResultSet rs = stmt.executeQuery();
 
                     if (rs.next()) {
+                        int userId = rs.getInt("id");
+                        SessionManager.setCurrentUser(userId, email, "Customer");
                         loadScene(event, "/fxml/customer_dashboard.fxml", "Inventro - Customer Dashboard");
                     } else {
                         errorLabel.setText("Incorrect email or password for customer.");

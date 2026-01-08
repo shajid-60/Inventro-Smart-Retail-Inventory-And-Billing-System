@@ -1,8 +1,8 @@
-// Java
 package com.shajid.app.inventro.controller;
 
 import com.shajid.app.inventro.database.OrderDao;
 import com.shajid.app.inventro.database.ProductDao;
+import com.shajid.app.inventro.database.RatingDao;
 import com.shajid.app.inventro.model.Product;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -10,29 +10,31 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BillingController {
 
-    // Row for the cart table
     public static class CartRow {
         private final IntegerProperty productId = new SimpleIntegerProperty();
         private final StringProperty  name      = new SimpleStringProperty();
         private final StringProperty  category  = new SimpleStringProperty();
-        private final DoubleProperty  price     = new SimpleDoubleProperty();   // base price
-        private final DoubleProperty  soldPrice = new SimpleDoubleProperty();   // customer price
+        private final DoubleProperty  price     = new SimpleDoubleProperty();
+        private final DoubleProperty  soldPrice = new SimpleDoubleProperty();
         private final IntegerProperty quantity  = new SimpleIntegerProperty(1);
         private final DoubleProperty  lineTotal = new SimpleDoubleProperty();
 
@@ -40,8 +42,8 @@ public class BillingController {
             setProductId(p.getId() == null ? 0 : p.getId());
             setName(p.getName());
             setCategory(p.getCategory());
-            setPrice(p.getPrice());          // base cost
-            setSoldPrice(p.getSoldPrice());  // selling price
+            setPrice(p.getPrice());
+            setSoldPrice(p.getSoldPrice());
             setQuantity(qty);
             recalcTotal();
         }
@@ -84,14 +86,13 @@ public class BillingController {
         public void setLineTotal(double v) { lineTotal.set(v); }
         public DoubleProperty lineTotalProperty() { return lineTotal; }
 
-        // Convert one cart line to a Product object (used by OrderDao)
         public Product toProduct() {
             Product p = new Product();
             p.setId(getProductId());
             p.setName(getName());
             p.setCategory(getCategory());
-            p.setPrice(getPrice());          // base price (cost)
-            p.setSoldPrice(getSoldPrice());  // selling price
+            p.setPrice(getPrice());
+            p.setSoldPrice(getSoldPrice());
             return p;
         }
     }
@@ -99,8 +100,8 @@ public class BillingController {
     @FXML private TableView<CartRow>            cartTable;
     @FXML private TableColumn<CartRow, String>  colName;
     @FXML private TableColumn<CartRow, String>  colCategory;
-    @FXML private TableColumn<CartRow, Double>  colPrice;     // shows sold price
-    @FXML private TableColumn<CartRow, Integer> colQuantity;  // quantity
+    @FXML private TableColumn<CartRow, Double>  colPrice;
+    @FXML private TableColumn<CartRow, Integer> colQuantity;
     @FXML private TableColumn<CartRow, Double>  colTotal;
 
     @FXML private Label subtotalLabel;
@@ -115,7 +116,6 @@ public class BillingController {
     public void initialize() {
         if (colName != null)     colName.setCellValueFactory(new PropertyValueFactory<>("name"));
         if (colCategory != null) colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
-        // display soldPrice as the price column
         if (colPrice != null)    colPrice.setCellValueFactory(new PropertyValueFactory<>("soldPrice"));
         if (colQuantity != null) colQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         if (colTotal != null)    colTotal.setCellValueFactory(new PropertyValueFactory<>("lineTotal"));
@@ -127,7 +127,6 @@ public class BillingController {
         updateTotals();
     }
 
-    // Called from CustomerDashboardController to inject selected products
     public void setCartItems(List<Product> products) {
         cartItems.clear();
         if (products == null) return;
@@ -143,7 +142,7 @@ public class BillingController {
                 .mapToDouble(CartRow::getLineTotal)
                 .sum();
 
-        double discount = 0.0; // apply any discount logic here
+        double discount = 0.0;
         double grandTotal = subtotal - discount;
 
         if (subtotalLabel != null) {
@@ -165,7 +164,6 @@ public class BillingController {
         }
 
         try {
-            // 1) Build products list for order (1 entry per quantity)
             List<Product> itemsForOrder = new ArrayList<>();
             for (CartRow row : cartItems) {
                 for (int i = 0; i < row.getQuantity(); i++) {
@@ -173,10 +171,8 @@ public class BillingController {
                 }
             }
 
-            // 2) Persist order and revenue
             OrderDao.insertCustomerOrder(itemsForOrder);
 
-            // 3) Decrease stock for each distinct product
             for (CartRow row : cartItems) {
                 int pid = row.getProductId();
                 if (pid > 0 && row.getQuantity() > 0) {
@@ -185,14 +181,100 @@ public class BillingController {
             }
 
             showInfo("Success", "Payment confirmed and bill saved.");
+
+            // Show rating dialog
+            if (SessionManager.getCurrentUserId() != null) {
+                showRatingDialog();
+            }
+
             cartItems.clear();
             updateTotals();
-
 
         } catch (Exception e) {
             e.printStackTrace();
             showError("Error", "Could not save bill.");
         }
+    }
+
+    private void showRatingDialog() {
+        // Get unique products from cart
+        Map<Integer, String> uniqueProducts = new HashMap<>();
+        for (CartRow row : cartItems) {
+            if (row.getProductId() > 0) {
+                uniqueProducts.put(row.getProductId(), row.getName());
+            }
+        }
+
+        if (uniqueProducts.isEmpty()) return;
+
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Rate Your Purchase");
+        dialog.setHeaderText("Please rate the products you purchased");
+
+        VBox content = new VBox(15);
+        content.setPadding(new Insets(20));
+        content.setStyle("-fx-background-color: #112233;");
+
+        Map<Integer, ComboBox<Integer>> ratingBoxes = new HashMap<>();
+
+        for (Map.Entry<Integer, String> entry : uniqueProducts.entrySet()) {
+            int productId = entry.getKey();
+            String productName = entry.getValue();
+
+            VBox productBox = new VBox(5);
+            Label nameLabel = new Label(productName);
+            nameLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;");
+
+            HBox ratingRow = new HBox(10);
+            ratingRow.setAlignment(Pos.CENTER_LEFT);
+
+            Label ratingLabel = new Label("Rating:");
+            ratingLabel.setStyle("-fx-text-fill: #88ffffff;");
+
+            ComboBox<Integer> ratingBox = new ComboBox<>();
+            ratingBox.getItems().addAll(1, 2, 3, 4, 5);
+            ratingBox.setValue(5);
+            ratingBox.setStyle("-fx-background-color: #223344; -fx-text-fill: white;");
+
+            Label starLabel = new Label("★★★★★");
+            starLabel.setStyle("-fx-text-fill: #FFC300; -fx-font-size: 16;");
+
+            ratingRow.getChildren().addAll(ratingLabel, ratingBox, starLabel);
+            productBox.getChildren().addAll(nameLabel, ratingRow);
+
+            ratingBoxes.put(productId, ratingBox);
+            content.getChildren().add(productBox);
+        }
+
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        // Style the dialog
+        dialog.getDialogPane().setStyle("-fx-background-color: #112233;");
+
+        dialog.setResultConverter(buttonType -> {
+            if (buttonType == ButtonType.OK) {
+                try {
+                    Integer userId = SessionManager.getCurrentUserId();
+                    if (userId != null) {
+                        for (Map.Entry<Integer, ComboBox<Integer>> entry : ratingBoxes.entrySet()) {
+                            int productId = entry.getKey();
+                            Integer rating = entry.getValue().getValue();
+                            if (rating != null) {
+                                RatingDao.addOrUpdateRating(productId, userId, rating, null);
+                            }
+                        }
+                        showInfo("Thank you!", "Your ratings have been saved.");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showError("Error", "Could not save ratings.");
+                }
+            }
+            return null;
+        });
+
+        dialog.showAndWait();
     }
 
     @FXML

@@ -1,4 +1,3 @@
-// Java
 package com.shajid.app.inventro;
 
 import com.shajid.app.inventro.database.DatabaseSetup;
@@ -12,12 +11,22 @@ public class Inventro extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Initialize DB and tables
         DatabaseSetup.initialize();
 
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/login.fxml"));
-        primaryStage.setScene(new Scene(root, 1200, 800));
+        Scene scene = new Scene(root, 1200, 800);
+
+        primaryStage.setScene(scene);
         primaryStage.setTitle("Inventro - Login");
+
+        // Make window resizable with minimum size constraints
+        primaryStage.setResizable(true);
+        primaryStage.setMinWidth(1000);
+        primaryStage.setMinHeight(700);
+
+        // Center the window on screen
+        primaryStage.centerOnScreen();
+
         primaryStage.show();
     }
 

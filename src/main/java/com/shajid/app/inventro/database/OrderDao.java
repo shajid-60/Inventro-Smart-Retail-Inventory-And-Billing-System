@@ -1,4 +1,3 @@
-// Java
 package com.shajid.app.inventro.database;
 
 import com.shajid.app.inventro.model.Product;
@@ -11,9 +10,6 @@ import java.sql.SQLException;
 public final class OrderDao {
 
     private OrderDao() { }
-
-    // Save a customer bill as one order
-    // \- `items` are products in the cart with quantity 1 each (you can later extend with quantity)
     public static void insertCustomerOrder(java.util.List<Product> items) throws SQLException {
         if (items == null || items.isEmpty()) return;
 

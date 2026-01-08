@@ -1,0 +1,73 @@
+[
+  {
+    "id": null,
+    "name": "Apple iPhone 15 Pro",
+    "category": "Smartphones",
+    "stock": 25,
+    "price": 999.99
+  },
+  {
+    "id": null,
+    "name": "Samsung Galaxy S24 Ultra",
+    "category": "Smartphones",
+    "stock": 20,
+    "price": 1199.00
+  },
+  {
+    "id": null,
+    "name": "Dell XPS 15 Laptop",
+    "category": "Computers",
+    "stock": 10,
+    "price": 1499.00
+  },
+  {
+    "id": null,
+    "name": "MacBook Pro 14 M3",
+    "category": "Computers",
+    "stock": 8,
+    "price": 1999.00
+  },
+  {
+    "id": null,
+    "name": "Sony WH-1000XM5 Headphones",
+    "category": "Audio",
+    "stock": 30,
+    "price": 349.99
+  },
+  {
+    "id": null,
+    "name": "Logitech MX Master 3S Mouse",
+    "category": "Accessories",
+    "stock": 50,
+    "price": 99.99
+  },
+  {
+    "id": null,
+    "name": "Samsung 55'' 4K Smart TV",
+    "category": "Electronics",
+    "stock": 15,
+    "price": 799.50
+  },
+  {
+    "id": null,
+    "name": "Canon EOS R6 Mark II",
+    "category": "Cameras",
+    "stock": 5,
+    "price": 2499.00
+  },
+  {
+    "id": null,
+    "name": "HP LaserJet Pro Printer",
+    "category": "Printers",
+    "stock": 12,
+    "price": 249.00
+  },
+  {
+    "id": null,
+    "name": "Logitech C920 Webcam",
+    "category": "Accessories",
+    "stock": 35,
+    "price": 79.99
+  }
+]
+

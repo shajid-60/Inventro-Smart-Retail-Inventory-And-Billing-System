@@ -1,5 +1,4 @@
 package com.shajid.app.inventro.controller;
-
 import com.shajid.app.inventro.database.SQLiteConnection;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,10 +8,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-
 public class RegisterController {
 
     @FXML private TextField fullNameField;

@@ -30,7 +30,6 @@
         <VBox spacing="18"
               style="-fx-padding: 20; -fx-background-color: radial-gradient(center 50% 10%, radius 90%, #00ffee33, transparent 80%);">
 
-            <!-- Summary cards row -->
             <HBox spacing="18">
                 <VBox spacing="4"
                       style="-fx-background-color: rgba(17,34,51,0.85); -fx-background-radius: 16; -fx-padding: 16;"
@@ -108,7 +107,7 @@
 
             </HBox>
 
-            <!-- Actions row -->
+
             <HBox spacing="10" alignment="CENTER_RIGHT">
                 <Button text="Manage Products"
                         onAction="#onManageProducts"
@@ -132,7 +131,6 @@
                         prefWidth="160"/>
             </HBox>
 
-            <!-- Chart area -->
             <BorderPane style="-fx-background-color: rgba(17,34,51,0.85); -fx-background-radius: 16; -fx-padding: 16;"
                         VBox.vgrow="ALWAYS">
                 <top>

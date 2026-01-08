@@ -1,0 +1,57 @@
+/* Chart styling to make text visible */
+.chart {
+    -fx-background-color: transparent;
+}
+
+.chart-content {
+    -fx-padding: 10px;
+}
+
+.chart-title {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.axis {
+    -fx-tick-label-fill: white;
+    -fx-font-size: 12px;
+}
+
+.axis-label {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.chart-bar {
+    -fx-bar-fill: #FFB6C1;
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+/* X-axis labels - clear and visible with proper spacing */
+.axis:bottom > .axis-tick-mark > .axis-tick-label {
+    -fx-rotate: 0;
+    -fx-text-fill: white;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.chart-horizontal-zero-line,
+.chart-vertical-zero-line {
+    -fx-stroke: transparent;
+}
+
+/* Make grid lines subtle */
+.chart-vertical-grid-lines,
+.chart-horizontal-grid-lines {
+    -fx-stroke: rgba(255, 255, 255, 0.1);
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}

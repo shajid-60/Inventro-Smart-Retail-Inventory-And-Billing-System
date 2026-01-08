@@ -1,13 +1,12 @@
-// Java
 package com.shajid.app.inventro.model;
 
 public class Order {
     private Integer id;
-    private String supplier; // or "Customer" / customer name
-    private String date;     // ISO string
-    private double total;    // sum of sold prices
+    private String supplier;
+    private String date;
+    private double total;
     private String status;
-    private double revenue;  // total - base cost
+    private double revenue;
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }

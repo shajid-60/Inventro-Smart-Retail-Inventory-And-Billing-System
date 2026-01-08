@@ -26,17 +26,30 @@ public class DatabaseSetup {
                 + "    name TEXT NOT NULL,"
                 + "    category TEXT,"
                 + "    stock INTEGER NOT NULL DEFAULT 0,"
-                + "    price REAL NOT NULL DEFAULT 0.0,"      // base price
-                + "    soldPrice REAL NOT NULL DEFAULT 0.0"   // customer price (15% markup)
+                + "    price REAL NOT NULL DEFAULT 0.0,"
+                + "    soldPrice REAL NOT NULL DEFAULT 0.0,"
+                + "    imagePath TEXT"
+                + ");"
+
+                + "CREATE TABLE IF NOT EXISTS ratings ("
+                + "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "    productId INTEGER NOT NULL,"
+                + "    userId INTEGER NOT NULL,"
+                + "    rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),"
+                + "    comment TEXT,"
+                + "    date TEXT NOT NULL,"
+                + "    FOREIGN KEY(productId) REFERENCES products(id) ON DELETE CASCADE,"
+                + "    FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE,"
+                + "    UNIQUE(productId, userId)"
                 + ");"
 
                 + "CREATE TABLE IF NOT EXISTS orders ("
                 + "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + "    supplier TEXT NOT NULL,"               // you can store \"Customer\" or empty
+                + "    supplier TEXT NOT NULL,"
                 + "    date TEXT NOT NULL,"
-                + "    total REAL NOT NULL DEFAULT 0.0,"      // sum of sold prices for the bill
+                + "    total REAL NOT NULL DEFAULT 0.0,"
                 + "    status TEXT NOT NULL,"
-                + "    revenue REAL NOT NULL DEFAULT 0.0"     // total \- base cost
+                + "    revenue REAL NOT NULL DEFAULT 0.0"
                 + ");";
 
         try (Connection conn = SQLiteConnection.connect();
@@ -44,7 +57,14 @@ public class DatabaseSetup {
 
             stmt.executeUpdate(sql);
 
-            // For existing DBs: ensure soldPrice has values (15% markup on price)
+            // Migrate: add imagePath column if it doesn't exist
+            try {
+                stmt.executeUpdate("ALTER TABLE products ADD COLUMN imagePath TEXT;");
+                System.out.println("Added imagePath column to products table.");
+            } catch (Exception e) {
+                // Column already exists, ignore
+            }
+
             String patchSql =
                     "UPDATE products SET soldPrice = price * 1.15 WHERE soldPrice IS NULL OR soldPrice = 0;";
             stmt.executeUpdate(patchSql);

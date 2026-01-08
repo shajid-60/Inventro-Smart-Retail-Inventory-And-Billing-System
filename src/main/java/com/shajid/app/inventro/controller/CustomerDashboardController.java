@@ -2,24 +2,21 @@
 package com.shajid.app.inventro.controller;
 
 import com.shajid.app.inventro.database.ProductDao;
+import com.shajid.app.inventro.database.RatingDao;
 import com.shajid.app.inventro.model.Product;
 import javafx.application.Platform;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -29,163 +26,157 @@ import java.util.concurrent.Executors;
 
 public class CustomerDashboardController {
 
-    public static class ProductRow {
-        private final IntegerProperty id = new SimpleIntegerProperty();
-        private final StringProperty name = new SimpleStringProperty();
-        private final StringProperty category = new SimpleStringProperty();
-        private final IntegerProperty stock = new SimpleIntegerProperty();
-        private final DoubleProperty price = new SimpleDoubleProperty();      // base price
-        private final DoubleProperty soldPrice = new SimpleDoubleProperty();  // customer price
-
-        public ProductRow(Product p) {
-            setId(p.getId());
-            setName(p.getName());
-            setCategory(p.getCategory());
-            setStock(p.getStock());
-            setPrice(p.getPrice());
-            setSoldPrice(p.getSoldPrice() == 0.0 ? p.getPrice() * 1.15 : p.getSoldPrice());
-        }
-
-        public Integer getId() { return id.get(); }
-        public void setId(Integer v) { id.set(v == null ? 0 : v); }
-        public IntegerProperty idProperty() { return id; }
-
-        public String getName() { return name.get(); }
-        public void setName(String v) { name.set(v); }
-        public StringProperty nameProperty() { return name; }
-
-        public String getCategory() { return category.get(); }
-        public void setCategory(String v) { category.set(v); }
-        public StringProperty categoryProperty() { return category; }
-
-        public int getStock() { return stock.get(); }
-        public void setStock(int v) { stock.set(v); }
-        public IntegerProperty stockProperty() { return stock; }
-
-        public double getPrice() { return price.get(); }
-        public void setPrice(double v) { price.set(v); }
-        public DoubleProperty priceProperty() { return price; }
-
-        public double getSoldPrice() { return soldPrice.get(); }
-        public void setSoldPrice(double v) { soldPrice.set(v); }
-        public DoubleProperty soldPriceProperty() { return soldPrice; }
-
-        public Product toProduct() {
-            Product p = new Product();
-            p.setId(getId());
-            p.setName(getName());
-            p.setCategory(getCategory());
-            p.setStock(getStock());
-            p.setPrice(getPrice());
-            p.setSoldPrice(getSoldPrice());
-            return p;
-        }
-    }
-
-    @FXML private TableView<ProductRow> productsTable;
-    @FXML private TableColumn<ProductRow, Integer> colId;
-    @FXML private TableColumn<ProductRow, String>  colName;
-    @FXML private TableColumn<ProductRow, String>  colCategory;
-    @FXML private TableColumn<ProductRow, Integer> colStock;
-    @FXML private TableColumn<ProductRow, Double>  colSoldPrice;
-    @FXML private TableColumn<ProductRow, Void>    colAction;
-
+    @FXML private ScrollPane productScrollPane;
+    @FXML private FlowPane productsContainer;
     @FXML private Label cartTotalLabel;
 
-    private final ObservableList<ProductRow> products = FXCollections.observableArrayList();
-    private final List<ProductRow> cart = new ArrayList<>();
+    private final List<Product> cart = new ArrayList<>();
     private double cartTotal = 0.0;
-
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @FXML
     public void initialize() {
-        if (colId != null)       colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        if (colName != null)     colName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        if (colCategory != null) colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
-        if (colStock != null)    colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        if (colSoldPrice != null)colSoldPrice.setCellValueFactory(new PropertyValueFactory<>("soldPrice"));
-
-        if (productsTable != null) {
-            productsTable.setItems(products);
+        if (productsContainer != null) {
+            productsContainer.setHgap(20);
+            productsContainer.setVgap(20);
+            productsContainer.setPadding(new Insets(20));
         }
 
-        setupActionColumn();
         reloadProductsAsync();
         updateCartTotalLabel();
-    }
-
-    private void setupActionColumn() {
-        if (colAction == null) return;
-
-        colAction.setCellFactory(col -> new TableCell<>() {
-            private final Button btn = new Button("Add to cart");
-
-            {
-                btn.setOnAction(e -> {
-                    ProductRow row = getTableView().getItems().get(getIndex());
-                    addToCart(row);
-                });
-                btn.setStyle(
-                        "-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);" +
-                                "-fx-text-fill:white; -fx-background-radius:12; -fx-font-weight:bold;"
-                );
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                setGraphic(empty ? null : btn);
-            }
-        });
-    }
-
-    private void addToCart(ProductRow row) {
-        if (row == null) return;
-        if (row.getStock() <= 0) {
-            showError("Out of stock", "This product is out of stock.");
-            return;
-        }
-        cart.add(row);
-        cartTotal += row.getSoldPrice();
-        updateCartTotalLabel();
-    }
-
-    private void updateCartTotalLabel() {
-        if (cartTotalLabel != null) {
-            cartTotalLabel.setText(String.format("%.2f", cartTotal));
-        }
     }
 
     private void reloadProductsAsync() {
         executor.submit(() -> {
             try {
                 List<Product> list = ProductDao.findAll();
-                List<ProductRow> rows = list.stream().map(ProductRow::new).toList();
-                Platform.runLater(() -> products.setAll(rows));
+                Platform.runLater(() -> {
+                    if (productsContainer != null) {
+                        productsContainer.getChildren().clear();
+                        for (Product p : list) {
+                            productsContainer.getChildren().add(createProductCard(p));
+                        }
+                    }
+                });
             } catch (Exception e) {
                 e.printStackTrace();
-                Platform.runLater(() ->
-                        showError("Load failed", "Could not load products for customer."));
+                Platform.runLater(() -> showError("Load failed", "Could not load products for customer."));
             }
         });
     }
 
+    private VBox createProductCard(Product product) {
+        VBox card = new VBox(10);
+        card.setAlignment(Pos.TOP_CENTER);
+        card.setPrefWidth(280);
+        card.setMinHeight(320);
+        card.setMaxHeight(360);
+        card.setStyle(
+            "-fx-background-color: rgba(17,34,51,0.95);" +
+            "-fx-background-radius: 16;" +
+            "-fx-padding: 16;" +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 15, 0.3, 0, 5);"
+        );
+
+        // Product name
+        Label nameLabel = new Label(product.getName());
+        nameLabel.setWrapText(true);
+        nameLabel.setMaxWidth(240);
+        nameLabel.setAlignment(Pos.CENTER);
+        nameLabel.setFont(Font.font("System Bold", 16));
+        nameLabel.setStyle("-fx-text-fill: white;");
+
+        // Rating display
+        HBox ratingBox = createRatingDisplay(product.getAverageRating(), product.getRatingCount());
+
+        // Price (customer price)
+        Label priceLabel = new Label(String.format("৳%.2f", product.getSoldPrice()));
+        priceLabel.setFont(Font.font("System Bold", 18));
+        priceLabel.setStyle("-fx-text-fill: #00f2ea;");
+
+        // Stock
+        Label stockLabel = new Label("Stock: " + product.getStock());
+        stockLabel.setFont(Font.font(12));
+        stockLabel.setStyle("-fx-text-fill: " + (product.getStock() > 0 ? "#00f2ea" : "#C70039") + ";");
+
+        // Add to cart button
+        Button addButton = new Button("Add to Cart");
+        addButton.setMaxWidth(Double.MAX_VALUE);
+        addButton.setStyle(
+            "-fx-background-color: linear-gradient(to right,#00f2ea,#00c4c4);" +
+            "-fx-background-radius: 12;" +
+            "-fx-text-fill: white;" +
+            "-fx-font-weight: bold;" +
+            "-fx-font-size: 14;"
+        );
+        addButton.setPrefHeight(36);
+
+        if (product.getStock() <= 0) {
+            addButton.setDisable(true);
+            addButton.setText("Out of Stock");
+        }
+
+        addButton.setOnAction(e -> addToCart(product));
+
+        card.getChildren().addAll(nameLabel, ratingBox, priceLabel, stockLabel, addButton);
+
+        return card;
+    }
+
+    private HBox createRatingDisplay(double avgRating, int count) {
+        HBox box = new HBox(5);
+        box.setAlignment(Pos.CENTER);
+
+        if (count == 0) {
+            Label noRatingLabel = new Label("Not rated yet");
+            noRatingLabel.setStyle("-fx-text-fill: #88ffffff; -fx-font-size: 11;");
+            box.getChildren().add(noRatingLabel);
+        } else {
+            // Show stars
+            for (int i = 1; i <= 5; i++) {
+                Label star = new Label(i <= Math.round(avgRating) ? "★" : "☆");
+                star.setStyle("-fx-text-fill: #FFC300; -fx-font-size: 16;");
+                box.getChildren().add(star);
+            }
+
+            Label ratingText = new Label(String.format("%.1f (%d)", avgRating, count));
+            ratingText.setStyle("-fx-text-fill: #88ffffff; -fx-font-size: 11;");
+            box.getChildren().add(ratingText);
+        }
+
+        return box;
+    }
+
+    private void addToCart(Product product) {
+        if (product.getStock() <= 0) {
+            showError("Out of stock", "This product is out of stock.");
+            return;
+        }
+        cart.add(product);
+        cartTotal += product.getSoldPrice();
+        updateCartTotalLabel();
+        showInfo("Added", product.getName() + " added to cart!");
+    }
+
+    private void updateCartTotalLabel() {
+        if (cartTotalLabel != null) {
+            cartTotalLabel.setText(String.format("৳%.2f", cartTotal));
+        }
+    }
+
     @FXML
     private void onGoToBilling(ActionEvent event) {
+        if (cart.isEmpty()) {
+            showError("Empty Cart", "Please add items to cart before checkout.");
+            return;
+        }
+
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fxml/billing.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/billing.fxml"));
             Parent root = loader.load();
 
             BillingController billingController = loader.getController();
-
-            // Convert ProductRow cart items to Product list
-            List<Product> cartProducts = new ArrayList<>();
-            for (ProductRow r : cart) {
-                cartProducts.add(r.toProduct());
-            }
-            billingController.setCartItems(cartProducts);
+            billingController.setCartItems(new ArrayList<>(cart));
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 1200, 800));
@@ -200,8 +191,8 @@ public class CustomerDashboardController {
     @FXML
     private void onLogout(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(
-                    getClass().getResource("/fxml/login.fxml"));
+            SessionManager.clearSession();
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 1200, 800));
             stage.setTitle("Inventro - Login");
@@ -218,5 +209,13 @@ public class CustomerDashboardController {
         a.setHeaderText(null);
         a.setContentText(msg);
         a.showAndWait();
+    }
+
+    private void showInfo(String title, String msg) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.show();
     }
 }

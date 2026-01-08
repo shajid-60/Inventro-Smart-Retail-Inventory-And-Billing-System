@@ -1,4 +1,3 @@
-// Java
 package com.shajid.app.inventro.model;
 
 public class Product {
@@ -6,8 +5,11 @@ public class Product {
     private String name;
     private String category;
     private int stock;
-    private double price;      // base cost
-    private double soldPrice;  // customer price (15% markup)
+    private double price;
+    private double soldPrice;
+    private String imagePath;
+    private double averageRating;
+    private int ratingCount;
 
     public Product() {}
 
@@ -18,6 +20,9 @@ public class Product {
         this.stock = stock;
         this.price = price;
         this.soldPrice = price * 1.15;
+        this.imagePath = null;
+        this.averageRating = 0.0;
+        this.ratingCount = 0;
     }
 
     public Integer getId() { return id; }
@@ -42,4 +47,13 @@ public class Product {
 
     public double getSoldPrice() { return soldPrice; }
     public void setSoldPrice(double soldPrice) { this.soldPrice = soldPrice; }
+
+    public String getImagePath() { return imagePath; }
+    public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+
+    public double getAverageRating() { return averageRating; }
+    public void setAverageRating(double averageRating) { this.averageRating = averageRating; }
+
+    public int getRatingCount() { return ratingCount; }
+    public void setRatingCount(int ratingCount) { this.ratingCount = ratingCount; }
 }

@@ -1,4 +1,3 @@
-// Java
 package com.shajid.app.inventro.controller;
 
 import com.shajid.app.inventro.database.ProductDao;
@@ -34,12 +33,20 @@ public class DashboardController {
 
     @FXML
     public void initialize() {
+        // Apply CSS to chart if available
+        if (stockChart != null) {
+            try {
+                String css = getClass().getResource("/styles/chart.css").toExternalForm();
+                stockChart.getStylesheets().add(css);
+            } catch (Exception e) {
+                // CSS file not found, continue without it
+            }
+        }
+
         loadSummaryAsync();
         loadChartAsync();
     }
 
-    // --- Load summary labels ---
-// Java
     @FXML private Label revenueLabel;
     private void loadSummaryAsync() {
         executor.submit(() -> {
@@ -57,7 +64,6 @@ public class DashboardController {
                         .mapToDouble(p -> p.getStock() * p.getPrice())
                         .sum();
 
-                // New: compute total revenue from orders
                 double totalRevenue = com.shajid.app.inventro.database.OrderDao.computeTotalRevenue();
 
                 Platform.runLater(() -> {
@@ -88,8 +94,6 @@ public class DashboardController {
         });
     }
 
-
-    // --- Load bar chart (Top 10 by stock) ---
     private void loadChartAsync() {
         executor.submit(() -> {
             try {
@@ -109,6 +113,21 @@ public class DashboardController {
                     if (stockChart != null) {
                         stockChart.getData().clear();
                         stockChart.getData().add(series);
+
+                        // Apply CSS styling to make labels visible
+                        stockChart.setStyle(
+                            "-fx-font-size: 12px;" +
+                            "-fx-text-fill: white;" +
+                            "-fx-tick-label-fill: white;"
+                        );
+
+                        // Style axis labels
+                        if (stockChart.getXAxis() != null) {
+                            stockChart.getXAxis().setStyle("-fx-tick-label-fill: white; -fx-font-size: 11px;");
+                        }
+                        if (stockChart.getYAxis() != null) {
+                            stockChart.getYAxis().setStyle("-fx-tick-label-fill: white;");
+                        }
                     }
                 });
             } catch (Exception e) {
@@ -119,7 +138,6 @@ public class DashboardController {
         });
     }
 
-    // --- Navigation ---
     @FXML
     private void onManageProducts(ActionEvent event) {
         switchScene(event, "/fxml/products.fxml", "Inventro - Products");
