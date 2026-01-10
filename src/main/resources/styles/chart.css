@@ -25,7 +25,8 @@
 }
 
 .chart-bar {
-    -fx-bar-fill: #FFB6C1;
+    -fx-background-color: linear-gradient(to top, #00c4c4, #00f2ea);
+    -fx-bar-fill: #00f2ea;
 }
 
 .chart-legend {
@@ -36,9 +37,15 @@
 /* X-axis labels - clear and visible with proper spacing */
 .axis:bottom > .axis-tick-mark > .axis-tick-label {
     -fx-rotate: 0;
-    -fx-text-fill: white;
-    -fx-font-size: 11px;
+    -fx-text-fill: #00f2ea;
+    -fx-font-size: 12px;
     -fx-font-weight: bold;
+    -fx-padding: 5px 0 0 0;
+}
+
+/* Better spacing for category axis */
+.axis:bottom {
+    -fx-tick-label-gap: 8;
 }
 
 .chart-horizontal-zero-line,

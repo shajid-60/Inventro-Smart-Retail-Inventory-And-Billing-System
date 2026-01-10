@@ -14,6 +14,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
@@ -73,8 +75,8 @@ public class ProductsController {
         VBox card = new VBox(10);
         card.setAlignment(Pos.TOP_CENTER);
         card.setPrefWidth(280);
-        card.setMinHeight(320);
-        card.setMaxHeight(360);
+        card.setMinHeight(380);
+        card.setMaxHeight(420);
         card.setStyle(
                 "-fx-background-color: rgba(17,34,51,0.95);" +
                 "-fx-background-radius: 16;" +
@@ -84,6 +86,43 @@ public class ProductsController {
 
         // click to select product (used for Import Image)
         card.setOnMouseClicked(e -> selectProduct(product.getId(), card));
+
+        // Product Image
+        if (product.getImagePath() != null && !product.getImagePath().isEmpty()) {
+            try {
+                File imageFile = new File(product.getImagePath());
+                if (imageFile.exists()) {
+                    ImageView imageView = new ImageView();
+                    imageView.setFitWidth(240);
+                    imageView.setFitHeight(140);
+                    imageView.setPreserveRatio(true);
+                    Image image = new Image(imageFile.toURI().toString(), 240, 140, true, true);
+                    imageView.setImage(image);
+                    card.getChildren().add(imageView);
+                } else {
+                    Label placeholderLabel = new Label("No Image");
+                    placeholderLabel.setStyle("-fx-text-fill: #88ffffff; -fx-font-size: 14;");
+                    StackPane placeholder = new StackPane(placeholderLabel);
+                    placeholder.setPrefSize(240, 140);
+                    placeholder.setStyle("-fx-background-color: #223344; -fx-background-radius: 8;");
+                    card.getChildren().add(placeholder);
+                }
+            } catch (Exception e) {
+                Label placeholderLabel = new Label("No Image");
+                placeholderLabel.setStyle("-fx-text-fill: #88ffffff; -fx-font-size: 14;");
+                StackPane placeholder = new StackPane(placeholderLabel);
+                placeholder.setPrefSize(240, 140);
+                placeholder.setStyle("-fx-background-color: #223344; -fx-background-radius: 8;");
+                card.getChildren().add(placeholder);
+            }
+        } else {
+            Label placeholderLabel = new Label("No Image");
+            placeholderLabel.setStyle("-fx-text-fill: #88ffffff; -fx-font-size: 14;");
+            StackPane placeholder = new StackPane(placeholderLabel);
+            placeholder.setPrefSize(240, 140);
+            placeholder.setStyle("-fx-background-color: #223344; -fx-background-radius: 8;");
+            card.getChildren().add(placeholder);
+        }
 
         // Product name
         Label nameLabel = new Label(product.getName());

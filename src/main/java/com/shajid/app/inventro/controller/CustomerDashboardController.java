@@ -14,11 +14,14 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -69,14 +72,60 @@ public class CustomerDashboardController {
         VBox card = new VBox(10);
         card.setAlignment(Pos.TOP_CENTER);
         card.setPrefWidth(280);
-        card.setMinHeight(320);
-        card.setMaxHeight(360);
+        card.setMinHeight(380);
+        card.setMaxHeight(420);
         card.setStyle(
             "-fx-background-color: rgba(17,34,51,0.95);" +
             "-fx-background-radius: 16;" +
             "-fx-padding: 16;" +
             "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 15, 0.3, 0, 5);"
         );
+
+        // Product Image
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(240);
+        imageView.setFitHeight(140);
+        imageView.setPreserveRatio(true);
+        imageView.setStyle("-fx-background-color: #223344; -fx-background-radius: 8;");
+
+        if (product.getImagePath() != null && !product.getImagePath().isEmpty()) {
+            try {
+                File imageFile = new File(product.getImagePath());
+                if (imageFile.exists()) {
+                    Image image = new Image(imageFile.toURI().toString(), 240, 140, true, true);
+                    imageView.setImage(image);
+                } else {
+                    // Show placeholder if image file doesn't exist
+                    Label placeholderLabel = new Label("No Image");
+                    placeholderLabel.setStyle("-fx-text-fill: #88ffffff; -fx-font-size: 14;");
+                    StackPane placeholder = new StackPane(placeholderLabel);
+                    placeholder.setPrefSize(240, 140);
+                    placeholder.setStyle("-fx-background-color: #223344; -fx-background-radius: 8;");
+                    card.getChildren().add(placeholder);
+                }
+            } catch (Exception e) {
+                // If image loading fails, show placeholder
+                Label placeholderLabel = new Label("No Image");
+                placeholderLabel.setStyle("-fx-text-fill: #88ffffff; -fx-font-size: 14;");
+                StackPane placeholder = new StackPane(placeholderLabel);
+                placeholder.setPrefSize(240, 140);
+                placeholder.setStyle("-fx-background-color: #223344; -fx-background-radius: 8;");
+                card.getChildren().add(placeholder);
+            }
+        } else {
+            // Show placeholder if no image path
+            Label placeholderLabel = new Label("No Image");
+            placeholderLabel.setStyle("-fx-text-fill: #88ffffff; -fx-font-size: 14;");
+            StackPane placeholder = new StackPane(placeholderLabel);
+            placeholder.setPrefSize(240, 140);
+            placeholder.setStyle("-fx-background-color: #223344; -fx-background-radius: 8;");
+            card.getChildren().add(placeholder);
+        }
+
+        // Only add imageView if it has an image
+        if (imageView.getImage() != null) {
+            card.getChildren().add(imageView);
+        }
 
         // Product name
         Label nameLabel = new Label(product.getName());

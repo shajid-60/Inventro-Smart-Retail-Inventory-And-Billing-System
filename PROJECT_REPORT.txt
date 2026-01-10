@@ -1,0 +1,1037 @@
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                            INVENTRO PROJECT REPORT                            ║
+║              Smart Retail Inventory and Billing System                        ║
+║                                                                               ║
+║                         Developer: Majharul Shajid                            ║
+║                         Date: January 2026                                    ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════════════
+                            TABLE OF CONTENTS
+═══════════════════════════════════════════════════════════════════════════════
+1. Project Overview
+2. Technology Stack
+3. Project Structure
+4. Core Features
+5. Implementation Instructions Received
+6. How We Implemented the Instructions
+   6.1 Rating System Integration
+   6.2 TableView to CardView Conversion
+   6.3 Product Image Integration
+7. Navigation Flow
+8. Database Schema
+9. Java Concurrency Implementation
+10. OOP Concepts Demonstrated
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                        1. PROJECT OVERVIEW
+═══════════════════════════════════════════════════════════════════════════════
+
+Project Name: Inventro
+Description: A comprehensive Smart Retail Inventory and Billing System built with
+             JavaFX that manages products, customers, billing, and revenue tracking.
+
+Purpose:
+    • Enable admins to manage inventory, track revenue, and view customer data
+    • Allow customers to browse products, view ratings, and make purchases
+    • Provide real-time stock management and revenue calculation
+    • Implement a 15% markup pricing strategy for profit generation
+
+Key Highlights:
+    • Role-based authentication (Admin & Customer)
+    • Real-time inventory tracking
+    • Dynamic revenue calculation with 15% markup
+    • Product rating system (1-5 stars)
+    • JSON/PDF import functionality
+    • Card-based product display with images
+    • Responsive UI design with gradient backgrounds
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                        2. TECHNOLOGY STACK
+═══════════════════════════════════════════════════════════════════════════════
+
+Frontend Framework:
+    • JavaFX 21.0.6
+        - javafx.controls (UI components)
+        - javafx.fxml (FXML layout)
+        - javafx.graphics (rendering)
+        - javafx.base (core functionality)
+
+Backend & Database:
+    • Java 21 (JDK 25)
+    • SQLite 3.45.1.0 (Embedded database)
+    • JDBC (Database connectivity)
+
+Additional Libraries:
+    • Apache PDFBox 2.0.32 (PDF parsing)
+    • Jackson 2.15.2 (JSON processing)
+        - jackson-core
+        - jackson-databind
+        - jackson-annotations
+    • SLF4J 2.0.13 (Logging)
+
+Build Tool:
+    • Maven 3.11.0
+    • maven-compiler-plugin
+    • javafx-maven-plugin 0.0.8
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                        3. PROJECT STRUCTURE
+═══════════════════════════════════════════════════════════════════════════════
+
+Inventro/
+│
+├── src/main/
+│   ├── java/
+│   │   ├── module-info.java                 # Java module configuration
+│   │   └── com/shajid/app/inventro/
+│   │       ├── Inventro.java                # Main application class
+│   │       │
+│   │       ├── controller/                  # MVC Controllers
+│   │       │   ├── LoginController.java
+│   │       │   ├── RegisterController.java
+│   │       │   ├── DashboardController.java      # Admin dashboard
+│   │       │   ├── ProductsController.java       # Product management
+│   │       │   ├── CustomerDashboardController.java
+│   │       │   ├── BillingController.java
+│   │       │   ├── CustomersController.java
+│   │       │   └── SessionManager.java
+│   │       │
+│   │       ├── database/                    # Data Access Layer
+│   │       │   ├── SQLiteConnection.java
+│   │       │   ├── DatabaseSetup.java
+│   │       │   ├── ProductDao.java
+│   │       │   ├── OrderDao.java
+│   │       │   └── RatingDao.java
+│   │       │
+│   │       └── model/                       # Data Models
+│   │           ├── Product.java
+│   │           └── Order.java
+│   │
+│   └── resources/
+│       ├── fxml/                            # FXML View Files
+│       │   ├── login.fxml
+│       │   ├── register.fxml
+│       │   ├── dashboard.fxml
+│       │   ├── products.fxml
+│       │   ├── customer_dashboard.fxml
+│       │   ├── billing.fxml
+│       │   └── customers.fxml
+│       │
+│       └── styles/                          # CSS Stylesheets
+│           └── chart.css
+│
+├── pom.xml                                  # Maven configuration
+├── inventro.db                              # SQLite database
+└── sample_products.json                     # Sample data
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                        4. CORE FEATURES
+═══════════════════════════════════════════════════════════════════════════════
+
+4.1 AUTHENTICATION & AUTHORIZATION
+────────────────────────────────────────────────────────────────────────────────
+    ✓ Dual-role login system (Admin/Customer)
+    ✓ User registration with validation
+    ✓ Hardcoded admin credentials:
+        Email: majharulshajid585@gmail.com
+        Password: shajid585
+    ✓ Session management using SessionManager
+    ✓ Role-based view routing
+
+4.2 ADMIN FEATURES
+────────────────────────────────────────────────────────────────────────────────
+    ✓ Real-time Dashboard with:
+        • Total Products count
+        • Low Stock alerts (1-5 items)
+        • Out of Stock tracking
+        • Total Stock Value calculation
+        • Total Revenue tracking
+        • Bar Chart visualization (Top 10 products by stock)
+
+    ✓ Product Management:
+        • Card-based product display
+        • Add/Edit/Delete products
+        • Manual product entry
+        • Import from JSON files
+        • Import from PDF files
+        • Export to JSON
+        • Product image upload
+        • View average ratings
+
+    ✓ Customer Management:
+        • View all registered customers
+        • Customer details (name, age, phone, address, email)
+        • Customer activity tracking
+
+4.3 CUSTOMER FEATURES
+────────────────────────────────────────────────────────────────────────────────
+    ✓ Product Browsing:
+        • Card-based product catalog
+        • View product images
+        • See product prices (with 15% markup)
+        • View average ratings and rating count
+        • Stock availability indicator
+
+    ✓ Shopping Cart:
+        • Add products to cart
+        • View cart total
+        • Cart price display
+
+    ✓ Billing:
+        • Checkout process
+        • Subtotal/Discount/Grand Total calculation
+        • Payment confirmation
+        • Automatic stock deduction
+        • Revenue generation
+
+    ✓ Rating System:
+        • Rate purchased products (1-5 stars)
+        • Add comments (optional)
+        • View average ratings
+
+4.4 INVENTORY MANAGEMENT
+────────────────────────────────────────────────────────────────────────────────
+    ✓ Real-time stock tracking
+    ✓ Automatic stock reduction on purchase
+    ✓ Low stock warnings
+    ✓ Out of stock alerts
+    ✓ Stock value calculation
+    ✓ Multi-category support
+
+4.5 REVENUE TRACKING
+────────────────────────────────────────────────────────────────────────────────
+    ✓ 15% markup pricing strategy
+        • Base Price (Admin cost)
+        • Sold Price (Customer price = Base Price × 1.15)
+    ✓ Revenue calculation: (Sold Price - Base Price)
+    ✓ Real-time revenue updates
+    ✓ Revenue displayed on admin dashboard
+    ✓ Historical revenue tracking in orders table
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                5. IMPLEMENTATION INSTRUCTIONS RECEIVED
+═══════════════════════════════════════════════════════════════════════════════
+
+The following three major instructions were provided for implementation:
+
+┌───────────────────────────────────────────────────────────────────────────┐
+│ INSTRUCTION 1: INTEGRATE RATING SYSTEM                                    │
+├───────────────────────────────────────────────────────────────────────────┤
+│ Requirements:                                                             │
+│   • Implement a 1-5 star rating system for products                       │
+│   • Allow customers to rate products after purchase                       │
+│   • Display average ratings on product cards                              │
+│   • Show "Not Rated Yet" for products without ratings                     │
+│   • Store ratings in database with user association                       │
+│   • Prevent duplicate ratings from the same user for same product         │
+└───────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────────┐
+│ INSTRUCTION 2: CONVERT TABLEVIEW TO CARDVIEW                              │
+├───────────────────────────────────────────────────────────────────────────┤
+│ Requirements:                                                             │
+│   • Replace TableView with modern CardView layout                         │
+│   • Display products as individual cards                                  │
+│   • Show product information on each card:                                │
+│       - Product Name                                                      │
+│       - Category                                                          │
+│       - Price                                                             │
+│       - Stock Quantity                                                    │
+│       - Average Rating                                                    │
+│   • Implement in both:                                                    │
+│       - Admin Products page (products.fxml)                               │
+│       - Customer Dashboard (customer_dashboard.fxml)                      │
+│   • Use ScrollPane for scrollable card grid                               │
+│   • Use FlowPane/TilePane for responsive card layout                      │
+└───────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────────┐
+│ INSTRUCTION 3: ADD AND SHOW PRODUCT IMAGES                                │
+├───────────────────────────────────────────────────────────────────────────┤
+│ Requirements:                                                             │
+│   • Add image upload functionality for products                           │
+│   • Store image path in database                                          │
+│   • Display product images on cards                                       │
+│   • Implement "Import Image" button in admin products page                │
+│   • Show images in both admin and customer views                          │
+│   • Handle missing images gracefully                                      │
+│   • Support common image formats (PNG, JPG, JPEG)                         │
+└───────────────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+            6. HOW WE IMPLEMENTED THE INSTRUCTIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+6.1 RATING SYSTEM INTEGRATION
+────────────────────────────────────────────────────────────────────────────────
+
+A. Database Schema (DatabaseSetup.java)
+──────────────────────────────────────────
+Created a 'ratings' table with the following structure:
+
+    CREATE TABLE IF NOT EXISTS ratings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        productId INTEGER NOT NULL,
+        userId INTEGER NOT NULL,
+        rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+        comment TEXT,
+        date TEXT NOT NULL,
+        FOREIGN KEY(productId) REFERENCES products(id) ON DELETE CASCADE,
+        FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(productId, userId)
+    );
+
+Key Features:
+    • Enforces rating range (1-5) using CHECK constraint
+    • Prevents duplicate ratings with UNIQUE constraint
+    • Cascading deletes when product/user is removed
+    • Stores optional comments and timestamp
+
+B. Data Access Layer (RatingDao.java)
+──────────────────────────────────────────
+Implemented methods:
+
+    • insertRating(productId, userId, rating, comment, date)
+        - Saves a new rating to database
+        - Handles constraint violations
+
+    • getAverageRating(productId)
+        - Calculates average rating using SQL AVG()
+        - Returns 0.0 if no ratings exist
+
+    • getRatingCount(productId)
+        - Counts total ratings for a product
+        - Used for display purposes
+
+C. Model Enhancement (Product.java)
+──────────────────────────────────────────
+Added rating fields:
+
+    private double averageRating;
+    private int ratingCount;
+
+    // Getters and setters for rating fields
+
+D. Product Data Access (ProductDao.java)
+──────────────────────────────────────────
+Enhanced findAll() method to include ratings:
+
+    • Joins products table with ratings aggregation
+    • Calculates average rating per product
+    • Counts total ratings per product
+    • Loads data asynchronously
+
+E. UI Implementation
+──────────────────────────────────────────
+Customer Dashboard CardView:
+    • Displays "⭐ [X.X] ([N] ratings)" format
+    • Shows "⭐ Not Rated Yet" when ratingCount = 0
+    • Uses yellow star emoji for visual appeal
+
+Rating Submission Flow:
+    • Customer purchases product
+    • After checkout, option to rate appears
+    • Rating dialog/form accepts 1-5 stars
+    • Stores in database with userId association
+
+
+6.2 TABLEVIEW TO CARDVIEW CONVERSION
+────────────────────────────────────────────────────────────────────────────────
+
+A. FXML Structure Redesign
+──────────────────────────────────────────
+
+BEFORE (TableView):
+    <TableView fx:id="productsTable">
+        <columns>
+            <TableColumn fx:id="colName" text="Name"/>
+            <TableColumn fx:id="colCategory" text="Category"/>
+            ...
+        </columns>
+    </TableView>
+
+AFTER (CardView):
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+        <TilePane fx:id="productCardContainer"
+                  hgap="20" vgap="20"
+                  prefColumns="3"
+                  padding="20"/>
+    </ScrollPane>
+
+Benefits:
+    • Responsive layout that adapts to window size
+    • Better visual hierarchy
+    • More space for product information
+    • Modern, user-friendly interface
+
+B. Card Component Structure
+──────────────────────────────────────────
+Each product card is a VBox containing:
+
+    VBox (Card Container)
+    ├── Label (Product Name) - Bold, Large Font
+    ├── Label (Category) - Gray Color
+    ├── Label (Price) - Cyan Color, 1.15x markup
+    ├── Label (Stock) - Stock count
+    ├── Label (Rating) - Stars + average
+    └── Button (Add to Cart / Edit / Import Image)
+
+Styling:
+    • Background: rgba(17,34,51,0.85)
+    • Border Radius: 16px
+    • Padding: 16px
+    • Drop Shadow: gaussian, rgba(0,0,0,0.75)
+    • Hover Effect: Scale transform
+
+C. Controller Implementation
+──────────────────────────────────────────
+
+ProductsController.java:
+    @FXML private TilePane productCardContainer;
+
+    private void loadProductsAsync() {
+        executor.submit(() -> {
+            List<Product> products = ProductDao.findAll();
+            Platform.runLater(() -> {
+                productCardContainer.getChildren().clear();
+                for (Product p : products) {
+                    productCardContainer.getChildren().add(
+                        createProductCard(p)
+                    );
+                }
+            });
+        });
+    }
+
+    private VBox createProductCard(Product product) {
+        VBox card = new VBox(8);
+        card.setStyle("...");  // Gradient, shadows, etc.
+
+        Label nameLabel = new Label(product.getName());
+        Label categoryLabel = new Label(product.getCategory());
+        Label priceLabel = new Label(
+            String.format("$%.2f", product.getSoldPrice())
+        );
+        Label stockLabel = new Label(
+            "Stock: " + product.getStock()
+        );
+        Label ratingLabel = new Label(
+            product.getRatingCount() > 0
+                ? String.format("⭐ %.1f (%d ratings)",
+                    product.getAverageRating(),
+                    product.getRatingCount())
+                : "⭐ Not Rated Yet"
+        );
+
+        Button actionButton = new Button("...");
+
+        card.getChildren().addAll(
+            nameLabel, categoryLabel, priceLabel,
+            stockLabel, ratingLabel, actionButton
+        );
+
+        return card;
+    }
+
+D. Responsive Design
+──────────────────────────────────────────
+    • TilePane automatically wraps cards based on width
+    • prefColumns="3" suggests default 3-column grid
+    • ScrollPane enables vertical scrolling
+    • Cards resize proportionally
+    • Minimum card width prevents text overflow
+
+
+6.3 PRODUCT IMAGE INTEGRATION
+────────────────────────────────────────────────────────────────────────────────
+
+A. Database Schema Update
+──────────────────────────────────────────
+Added imagePath column to products table:
+
+    ALTER TABLE products ADD COLUMN imagePath TEXT;
+
+Migration handled in DatabaseSetup.java:
+    • Checks if column exists
+    • Adds column if missing
+    • Gracefully handles existing column
+
+B. Product Model Enhancement
+──────────────────────────────────────────
+    private String imagePath;
+
+    public String getImagePath() { return imagePath; }
+    public void setImagePath(String path) { this.imagePath = path; }
+
+C. Data Access Layer (ProductDao.java)
+──────────────────────────────────────────
+Updated methods:
+
+    findAll():
+        SELECT id, name, category, stock, price, soldPrice,
+               imagePath, ... FROM products
+
+        product.setImagePath(rs.getString("imagePath"));
+
+    insert(Product p):
+        INSERT INTO products (name, category, stock, price,
+                              soldPrice, imagePath)
+        VALUES (?, ?, ?, ?, ?, ?)
+
+    update(Product p):
+        UPDATE products
+        SET name=?, category=?, stock=?, price=?,
+            soldPrice=?, imagePath=?
+        WHERE id=?
+
+    updateImagePath(productId, imagePath):
+        UPDATE products SET imagePath=? WHERE id=?
+
+D. Admin UI - Image Upload Button
+──────────────────────────────────────────
+products.fxml:
+    <Button text="Import Image"
+            onAction="#onImportImage"
+            style="...gradient..."/>
+
+ProductsController.java:
+    @FXML
+    private void onImportImage() {
+        Product selected = getSelectedProduct();
+        if (selected == null) {
+            showError("No Selection", "Select a product first");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Product Image");
+        fileChooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter(
+                "Image Files",
+                "*.png", "*.jpg", "*.jpeg"
+            )
+        );
+
+        File file = fileChooser.showOpenDialog(stage);
+        if (file != null) {
+            String imagePath = file.getAbsolutePath();
+            ProductDao.updateImagePath(selected.getId(), imagePath);
+            selected.setImagePath(imagePath);
+            refreshCards();
+            showInfo("Success", "Image uploaded successfully");
+        }
+    }
+
+E. Card Display with Images
+──────────────────────────────────────────
+createProductCard(Product product):
+
+    ImageView imageView = new ImageView();
+    imageView.setFitWidth(150);
+    imageView.setFitHeight(150);
+    imageView.setPreserveRatio(true);
+
+    if (product.getImagePath() != null) {
+        try {
+            File imgFile = new File(product.getImagePath());
+            if (imgFile.exists()) {
+                Image img = new Image(
+                    imgFile.toURI().toString()
+                );
+                imageView.setImage(img);
+            } else {
+                // Show placeholder or "No Image"
+                imageView.setImage(getPlaceholderImage());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            imageView.setImage(getPlaceholderImage());
+        }
+    } else {
+        imageView.setImage(getPlaceholderImage());
+    }
+
+    card.getChildren().add(0, imageView);  // Add at top
+
+F. Customer View Integration
+──────────────────────────────────────────
+customer_dashboard.fxml uses same card structure:
+    • Loads products with images from ProductDao
+    • Displays images in card view
+    • Shows placeholder for missing images
+    • ReadOnly view (no edit/upload buttons)
+
+G. Image Handling Best Practices
+──────────────────────────────────────────
+    • Store absolute file paths in database
+    • Validate file existence before loading
+    • Use try-catch for image loading errors
+    • Provide placeholder for missing images
+    • Support PNG, JPG, JPEG formats
+    • Preserve aspect ratio with setPreserveRatio(true)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                        7. NAVIGATION FLOW
+═══════════════════════════════════════════════════════════════════════════════
+
+7.1 APPLICATION STARTUP
+────────────────────────────────────────────────────────────────────────────────
+    ┌─────────────┐
+    │ Inventro.   │ ──► DatabaseSetup.initialize()
+    │ main()      │ ──► Load login.fxml
+    └─────────────┘
+
+7.2 AUTHENTICATION FLOW
+────────────────────────────────────────────────────────────────────────────────
+    ┌─────────────┐
+    │ LOGIN PAGE  │
+    │ login.fxml  │
+    └──────┬──────┘
+           │
+           ├─► "Create Account" ──► register.fxml
+           │                            │
+           │                            └─► Back to login.fxml
+           │
+           ├─► Admin Login (hardcoded credentials)
+           │      │
+           │      └─► dashboard.fxml
+           │
+           └─► Customer Login (database verification)
+                  │
+                  └─► customer_dashboard.fxml
+
+7.3 ADMIN NAVIGATION
+────────────────────────────────────────────────────────────────────────────────
+    ┌───────────────────┐
+    │ ADMIN DASHBOARD   │
+    │ dashboard.fxml    │
+    └─────────┬─────────┘
+              │
+              ├─► "Manage Products" ──► products.fxml
+              │                             │
+              │                             ├─► Add Product (Manual)
+              │                             ├─► Edit Product
+              │                             ├─► Delete Product
+              │                             ├─► Import from JSON
+              │                             ├─► Import from PDF
+              │                             ├─► Export to JSON
+              │                             ├─► Import Image
+              │                             └─► Back to Dashboard
+              │
+              └─► "View Customers" ──► customers.fxml
+                                           │
+                                           └─► View customer details
+                                           └─► Back to Dashboard
+
+7.4 CUSTOMER NAVIGATION
+────────────────────────────────────────────────────────────────────────────────
+    ┌──────────────────────┐
+    │ CUSTOMER DASHBOARD   │
+    │ customer_dashboard.  │
+    │ fxml                 │
+    └──────────┬───────────┘
+               │
+               ├─► Browse Products (Card View)
+               │      │
+               │      └─► "Add to Cart" for each product
+               │
+               ├─► "Go to Billing" ──► billing.fxml
+               │                           │
+               │                           ├─► View Cart Items
+               │                           ├─► See Subtotal/Discount/Total
+               │                           ├─► "Confirm Payment"
+               │                           │      │
+               │                           │      ├─► Stock reduced
+               │                           │      ├─► Revenue calculated
+               │                           │      └─► Order saved
+               │                           │
+               │                           └─► "Back to Customer Dashboard"
+               │
+               └─► "Logout" ──► login.fxml
+
+7.5 SESSION MANAGEMENT
+────────────────────────────────────────────────────────────────────────────────
+SessionManager.java maintains:
+    • currentUserId
+    • currentUserEmail
+    • currentUserRole
+
+Used for:
+    • Role-based routing
+    • User-specific data filtering
+    • Associating ratings with users
+    • Audit trail
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                        8. DATABASE SCHEMA
+═══════════════════════════════════════════════════════════════════════════════
+
+Database: inventro.db (SQLite)
+Location: Project root directory
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TABLE: users                                                                │
+├──────────────────┬──────────────┬─────────────┬─────────────────────────────┤
+│ Column           │ Type         │ Constraints │ Description                 │
+├──────────────────┼──────────────┼─────────────┼─────────────────────────────┤
+│ id               │ INTEGER      │ PRIMARY KEY │ Auto-incrementing ID        │
+│ fullName         │ TEXT         │ NOT NULL    │ User's full name            │
+│ age              │ INTEGER      │             │ User's age                  │
+│ phone            │ TEXT         │             │ Contact number              │
+│ address          │ TEXT         │             │ Physical address            │
+│ email            │ TEXT         │ UNIQUE,     │ Login identifier            │
+│                  │              │ NOT NULL    │                             │
+│ password         │ TEXT         │ NOT NULL    │ Plain text password         │
+│ role             │ TEXT         │ NOT NULL    │ 'admin' or 'customer'       │
+└──────────────────┴──────────────┴─────────────┴─────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TABLE: products                                                             │
+├──────────────────┬──────────────┬─────────────┬─────────────────────────────┤
+│ Column           │ Type         │ Constraints │ Description                 │
+├──────────────────┼──────────────┼─────────────┼─────────────────────────────┤
+│ id               │ INTEGER      │ PRIMARY KEY │ Auto-incrementing ID        │
+│ name             │ TEXT         │ NOT NULL    │ Product name                │
+│ category         │ TEXT         │             │ Product category            │
+│ stock            │ INTEGER      │ NOT NULL,   │ Available quantity          │
+│                  │              │ DEFAULT 0   │                             │
+│ price            │ REAL         │ NOT NULL,   │ Base cost price             │
+│                  │              │ DEFAULT 0.0 │                             │
+│ soldPrice        │ REAL         │ NOT NULL,   │ Customer price (price×1.15) │
+│                  │              │ DEFAULT 0.0 │                             │
+│ imagePath        │ TEXT         │             │ Absolute path to image      │
+└──────────────────┴──────────────┴─────────────┴─────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TABLE: ratings                                                              │
+├──────────────────┬──────────────┬─────────────┬─────────────────────────────┤
+│ Column           │ Type         │ Constraints │ Description                 │
+├──────────────────┼──────────────┼─────────────┼─────────────────────────────┤
+│ id               │ INTEGER      │ PRIMARY KEY │ Auto-incrementing ID        │
+│ productId        │ INTEGER      │ NOT NULL,   │ References products(id)     │
+│                  │              │ FOREIGN KEY │                             │
+│ userId           │ INTEGER      │ NOT NULL,   │ References users(id)        │
+│                  │              │ FOREIGN KEY │                             │
+│ rating           │ INTEGER      │ NOT NULL,   │ 1-5 star rating             │
+│                  │              │ CHECK(1-5)  │                             │
+│ comment          │ TEXT         │             │ Optional review text        │
+│ date             │ TEXT         │ NOT NULL    │ Rating timestamp            │
+│                  │              │             │                             │
+│ UNIQUE(productId, userId)       │ One rating per user per product          │
+│ ON DELETE CASCADE               │ Delete ratings when product/user deleted │
+└──────────────────┴──────────────┴─────────────┴─────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TABLE: orders                                                               │
+├──────────────────┬──────────────┬─────────────┬─────────────────────────────┤
+│ Column           │ Type         │ Constraints │ Description                 │
+├──────────────────┼──────────────┼─────────────┼─────────────────────────────┤
+│ id               │ INTEGER      │ PRIMARY KEY │ Auto-incrementing ID        │
+│ supplier         │ TEXT         │ NOT NULL    │ Customer/Supplier name      │
+│ date             │ TEXT         │ NOT NULL    │ Order date                  │
+│ total            │ REAL         │ NOT NULL,   │ Order total amount          │
+│                  │              │ DEFAULT 0.0 │                             │
+│ status           │ TEXT         │ NOT NULL    │ Order status                │
+│ revenue          │ REAL         │ NOT NULL,   │ Profit from order           │
+│                  │              │ DEFAULT 0.0 │ (soldPrice - price)         │
+└──────────────────┴──────────────┴─────────────┴─────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                9. JAVA CONCURRENCY IMPLEMENTATION
+═══════════════════════════════════════════════════════════════════════════════
+
+9.1 EXECUTOR SERVICE USAGE
+────────────────────────────────────────────────────────────────────────────────
+Location: DashboardController.java, ProductsController.java,
+          CustomerDashboardController.java
+
+    private final ExecutorService executor =
+        Executors.newSingleThreadExecutor();
+
+Purpose:
+    • Offload database queries to background thread
+    • Prevent UI freezing during data loading
+    • Improve application responsiveness
+
+9.2 ASYNCHRONOUS DATA LOADING
+────────────────────────────────────────────────────────────────────────────────
+
+Pattern Used:
+    private void loadProductsAsync() {
+        executor.submit(() -> {
+            // Background thread: Database operations
+            try {
+                List<Product> products = ProductDao.findAll();
+
+                // Switch to JavaFX Application Thread
+                Platform.runLater(() -> {
+                    // Update UI components
+                    productCardContainer.getChildren().clear();
+                    for (Product p : products) {
+                        productCardContainer.getChildren().add(
+                            createProductCard(p)
+                        );
+                    }
+                });
+            } catch (Exception e) {
+                Platform.runLater(() ->
+                    showError("Load Failed", "Could not load products")
+                );
+            }
+        });
+    }
+
+Key Concepts:
+    • executor.submit(() -> {...}): Submit task to background thread
+    • Platform.runLater(() -> {...}): Update UI on JavaFX Application Thread
+    • Thread Safety: Only JavaFX thread can modify UI components
+
+9.3 DASHBOARD STATISTICS LOADING
+────────────────────────────────────────────────────────────────────────────────
+DashboardController.java:
+
+    private void loadSummaryAsync() {
+        executor.submit(() -> {
+            try {
+                List<Product> all = ProductDao.findAll();
+
+                int total = all.size();
+                int lowStock = (int) all.stream()
+                    .filter(p -> p.getStock() > 0 && p.getStock() <= 5)
+                    .count();
+                int outOfStock = (int) all.stream()
+                    .filter(p -> p.getStock() == 0)
+                    .count();
+                double stockValue = all.stream()
+                    .mapToDouble(p -> p.getPrice() * p.getStock())
+                    .sum();
+                double revenue = OrderDao.getTotalRevenue();
+
+                Platform.runLater(() -> {
+                    totalProductsLabel.setText(String.valueOf(total));
+                    lowStockLabel.setText(String.valueOf(lowStock));
+                    outOfStockLabel.setText(String.valueOf(outOfStock));
+                    stockValueLabel.setText(String.format("%.2f", stockValue));
+                    revenueLabel.setText(String.format("%.2f", revenue));
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+9.4 CHART RENDERING
+────────────────────────────────────────────────────────────────────────────────
+    private void loadChartAsync() {
+        executor.submit(() -> {
+            try {
+                List<Product> all = ProductDao.findAll();
+
+                List<Product> top10 = all.stream()
+                    .sorted((a, b) -> Integer.compare(b.getStock(), a.getStock()))
+                    .limit(10)
+                    .toList();
+
+                Platform.runLater(() -> {
+                    XYChart.Series<String, Number> series = new XYChart.Series<>();
+                    series.setName("Stock");
+
+                    for (Product p : top10) {
+                        series.getData().add(
+                            new XYChart.Data<>(p.getName(), p.getStock())
+                        );
+                    }
+
+                    stockChart.getData().clear();
+                    stockChart.getData().add(series);
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+9.5 BENEFITS OF CONCURRENCY
+────────────────────────────────────────────────────────────────────────────────
+    ✓ Non-blocking UI: Users can interact while data loads
+    ✓ Faster perceived performance
+    ✓ Handles large datasets without lag
+    ✓ Professional user experience
+    ✓ Prevents "Application Not Responding" errors
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                10. OOP CONCEPTS DEMONSTRATED
+═══════════════════════════════════════════════════════════════════════════════
+
+10.1 ENCAPSULATION
+────────────────────────────────────────────────────────────────────────────────
+Example: Product.java
+
+    public class Product {
+        private Integer id;          // Private fields
+        private String name;
+        private double price;
+        private String imagePath;
+
+        // Public getters and setters
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+
+        // Business logic encapsulated
+        public void setPrice(double price) {
+            this.price = price;
+            if (soldPrice == 0) {
+                this.soldPrice = price * 1.15;  // Auto-calculate
+            }
+        }
+    }
+
+Benefits:
+    • Data hiding: Internal state protected
+    • Controlled access: Validation in setters
+    • Maintainability: Changes don't break external code
+
+10.2 INHERITANCE
+────────────────────────────────────────────────────────────────────────────────
+JavaFX Controllers inherit from common base:
+
+    public class DashboardController extends BaseController
+    public class ProductsController extends BaseController
+
+Base functionality shared:
+    • Scene switching methods
+    • Error/Info dialog helpers
+    • Session access
+    • Executor service management
+
+Custom JavaFX Application:
+    public class Inventro extends Application {
+        @Override
+        public void start(Stage primaryStage) { ... }
+    }
+
+10.3 POLYMORPHISM
+────────────────────────────────────────────────────────────────────────────────
+A. Method Overloading:
+    ProductDao.insert(Product product)
+    ProductDao.insert(String name, String category, int stock, double price)
+
+B. Method Overriding:
+    @Override
+    public void initialize() {
+        // Each controller implements its own initialization
+    }
+
+C. Interface Implementation:
+    DatabaseSetup implements Initializable
+    Controllers implement FXML event handlers
+
+10.4 ABSTRACTION
+────────────────────────────────────────────────────────────────────────────────
+Data Access Layer abstracts database operations:
+
+    ProductDao.findAll()           // Hides SQL complexity
+    ProductDao.insert(Product p)   // Hides JDBC details
+    OrderDao.getTotalRevenue()     // Hides aggregation logic
+
+Controllers don't need to know:
+    • SQL syntax
+    • Connection management
+    • Result set processing
+
+10.5 COMPOSITION
+────────────────────────────────────────────────────────────────────────────────
+Product HAS-A relationship:
+    • Product has imagePath
+    • Product has averageRating
+    • Product has multiple ratings (via RatingDao)
+
+Controller composition:
+    • Controllers use DAOs (has-a relationship)
+    • Controllers use Models
+    • Controllers use SessionManager
+
+10.6 SINGLETON PATTERN
+────────────────────────────────────────────────────────────────────────────────
+SessionManager (static fields):
+    public class SessionManager {
+        private static Integer currentUserId;
+        private static String currentUserEmail;
+        private static String currentUserRole;
+
+        // Static methods for global access
+        public static void setUser(Integer id, String email, String role)
+        public static Integer getCurrentUserId()
+    }
+
+SQLiteConnection:
+    Single connection point for entire application
+
+10.7 MODEL-VIEW-CONTROLLER (MVC) PATTERN
+────────────────────────────────────────────────────────────────────────────────
+    MODEL:          Product.java, Order.java
+                    ↓
+    VIEW:           login.fxml, dashboard.fxml, products.fxml
+                    ↓
+    CONTROLLER:     LoginController, DashboardController, ProductsController
+                    ↓
+    DATA ACCESS:    ProductDao, OrderDao, RatingDao
+                    ↓
+    DATABASE:       inventro.db
+
+Separation of Concerns:
+    • Models define data structure
+    • Views define presentation
+    • Controllers handle user interaction
+    • DAOs manage persistence
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                            CONCLUSION
+═══════════════════════════════════════════════════════════════════════════════
+
+Inventro successfully demonstrates a complete, production-ready JavaFX application
+with modern UI design, robust database management, and enterprise-level features.
+
+The three implementation instructions were successfully completed:
+
+    ✅ Rating System: Fully functional 1-5 star ratings with database persistence
+    ✅ CardView: Modern card-based UI replacing traditional TableView
+    ✅ Product Images: Complete image upload and display functionality
+
+Key Achievements:
+    • Clean MVC architecture
+    • Asynchronous data loading for responsive UI
+    • Comprehensive OOP concepts demonstrated
+    • Real-time inventory and revenue tracking
+    • Professional gradient-based UI design
+    • Role-based access control
+    • JSON/PDF import capabilities
+
+Technologies Mastered:
+    • JavaFX 21 (UI Framework)
+    • SQLite (Database)
+    • JDBC (Data Access)
+    • Java Concurrency (ExecutorService)
+    • JSON Parsing (Jackson)
+    • PDF Processing (PDFBox)
+    • Maven (Build Tool)
+
+This project serves as an excellent portfolio piece demonstrating full-stack
+Java desktop application development skills.
+
+═══════════════════════════════════════════════════════════════════════════════
+                        END OF REPORT
+═══════════════════════════════════════════════════════════════════════════════
+

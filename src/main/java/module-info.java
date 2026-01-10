@@ -1,6 +1,8 @@
 module com.shajid.app.inventro {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.base;
+    requires javafx.graphics;
     requires java.sql;
     requires org.apache.pdfbox;
     requires com.fasterxml.jackson.core;
